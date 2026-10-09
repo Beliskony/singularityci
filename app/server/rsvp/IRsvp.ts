@@ -16,4 +16,5 @@ export interface IRsvp {
   status: RsvpStatus;
   message?: string;
   respondedAt: Date;
+  createdAt: Date;
 }

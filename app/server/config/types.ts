@@ -130,6 +130,15 @@ export interface AuditLogsTable {
   created_at: Generated<Date>;
 }
 
+export interface ApiRequestLogsTable {
+  id: Generated<number>;
+  method: string;
+  path: string;
+  status_code: number;
+  duration_ms: number;
+  created_at: Generated<Date>;
+}
+
 export interface Database {
   clients: ClientsTable;
   admins: AdminsTable;
@@ -141,4 +150,5 @@ export interface Database {
   rsvps: RsvpsTable;
   admin_password_resets: AdminPasswordResetsTable;
   audit_logs: AuditLogsTable;
+  api_request_logs: ApiRequestLogsTable;
 }

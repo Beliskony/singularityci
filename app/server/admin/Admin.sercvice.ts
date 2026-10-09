@@ -14,9 +14,14 @@ import {
 import { CreateModeratorInput } from "./AdminSchemaZod";
 import { SiteStatus } from "../sites/ISite";
 import bcrypt from "bcrypt";
+import { IApiMetrics } from "./IAdminStats.type";
 
 
 // ---- Contrats des repositories (implémentations réelles branchées séparément) ----
+
+interface ApiMetricsRepository {
+  getMetrics(range: IDateRange): Promise<IApiMetrics>;
+}
 
 interface AdminRepository {
   findById(id: string): Promise<IAdmin | null>;
@@ -82,7 +87,8 @@ export class AdminService {
     private paymentStats: PaymentStatsRepository,
     private rsvpStats: RsvpStatsRepository,
     private templateStats: TemplateStatsRepository,
-    private auditLog: AuditLogRepository
+    private auditLog: AuditLogRepository,
+    private apiMetrics: ApiMetricsRepository
   ) {}
 
   // =========================================================
@@ -242,6 +248,11 @@ export class AdminService {
     }
     await this.paymentStats.refund(paymentId, reason);
     await this.auditLog.log(caller.adminId, AuditAction.REFUND_PAYMENT, paymentId, { reason });
+  }
+
+   async getApiMetrics(caller: IAdminAuthPayload, range: IDateRange): Promise<IApiMetrics> {
+    this.assertPermission(caller, AdminPermission.VIEW_ANALYTICS);
+    return this.apiMetrics.getMetrics(range);
   }
 
   // =========================================================

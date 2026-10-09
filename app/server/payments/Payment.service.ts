@@ -153,6 +153,22 @@ export class PaymentService {
     await this.siteService.activateAfterPayment(payment.siteId, payment.id);
   }
 
+  // ============ AJOUT dans payments/Payment.service.ts ============
+// À insérer dans la classe PaymentService, par exemple juste après initiatePayment().
+// Sert à la page de confirmation côté client : vérifier où en est un paiement,
+// avec contrôle d'ownership, sans exposer le repository brut aux routes API.
+
+  async getStatus(
+    clientId: string,
+    paymentId: string
+  ): Promise<{ paymentId: string; siteId: string; status: PaymentStatus }> {
+    const payment = await this.paymentRepo.findById(paymentId);
+    if (!payment) throw new NotFoundError("PAYMENT");
+    if (payment.clientId !== clientId) throw new OwnershipError();
+
+    return { paymentId: payment.id, siteId: payment.siteId, status: payment.status };
+  }
+
   // =========================================================
   // REMBOURSEMENT (déclenché par Admin.service.ts, jamais directement par le client)
   // =========================================================

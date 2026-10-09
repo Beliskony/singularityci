@@ -179,6 +179,20 @@ export class SiteService {
     });
   }
 
+async getSiteForEditing(
+  clientId: string,
+  siteId: string
+): Promise<{ site: ISite; images: ISiteImage[]; fieldSchema: TemplateFieldSchema }> {
+  const site = await this.getOwnedSite(clientId, siteId);
+ 
+  const [images, fieldSchema] = await Promise.all([
+    this.imageRepo.findBySiteId(siteId),
+    this.getFieldSchemaForSite(site),
+  ]);
+ 
+  return { site, images, fieldSchema };
+}
+
   async removeImage(clientId: string, siteId: string, imageId: string): Promise<void> {
     const site = await this.getOwnedSite(clientId, siteId);
     this.assertEditable(site);
