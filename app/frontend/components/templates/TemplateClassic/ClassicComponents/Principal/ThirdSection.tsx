@@ -66,12 +66,12 @@ const ThirdSection = ({ venueName, venueImages }: ThirdSectionProps) => {
       }`}
     >
       <div
-        className="relative w-full min-h-screen bg-ivoire rounded-t-[160px] flex flex-col items-center mt-5 pt-5 pb-10
+        className="relative w-full min-h-screen bg-ivoire rounded-t-[160px] flex flex-col items-center mt-5 pt-5 pb-4
                    sm:max-w-md sm:mx-auto
-                   lg:min-h-0 lg:max-w-sm lg:mt-0 lg:pt-8 lg:pb-14 lg:rounded-[160px] lg:shadow-2xl"
+                   lg:min-h-0 lg:max-w-sm lg:mt-0 lg:pt-8 lg:pb-5 lg:rounded-[160px] lg:shadow-2xl"
       >
         <div className="ts-item relative w-50 mt-2 lg:-mt-10">
-          <img src="/templates/classic/Illustrion2.png" alt="" className="w-full h-full object-cover" />
+          <img src="/classiqueTemplate/Illustration2.png" alt="" className="w-full h-full object-cover" />
         </div>
 
         {venueImages.length > 0 && (
@@ -101,14 +101,14 @@ const ThirdSection = ({ venueName, venueImages }: ThirdSectionProps) => {
 
         {venueName && (
           <div className="ts-item flex flex-col items-center mt-8 px-6 text-center">
-            <p className="italic text-brand-sage font-script text-2xl sm:text-3xl leading-snug">{venueName}</p>
+            <p className="italic text-(--text-on-light) font-script text-2xl sm:text-3xl leading-snug">{venueName}</p>
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
               target="_blank"
               rel="noopener noreferrer"
               className="ts-map-btn mt-6 inline-flex items-center px-9 py-3.5 rounded-full
-                bg-primary text-ivoire text-sm sm:text-base font-medium tracking-widest uppercase
-                shadow-md shadow-primary/30 ring-1 ring-ivoire/20 hover:shadow-lg hover:shadow-primary/40"
+              bg-(--primary) text-ivoire text-sm sm:text-base font-medium tracking-widest uppercase
+              shadow-md shadow-(--primary)/30 ring-1 ring-ivoire/20 hover:shadow-lg hover:shadow-(--primary)/40"
             >
               Itinéraire Google Maps
             </a>

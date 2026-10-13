@@ -61,7 +61,7 @@ const FormSection = ({ rsvpDeadlineLabel, onSubmitRsvp }: FormSectionProps) => {
       >
         <h2 className="text-8xl font-bold text-vert tracking-[20px] w-full">RSVP</h2>
         <img
-          src="/templates/classic/rsvp-flowers.png"
+          src="/classiqueTemplate/rsvp-flowers.png"
           alt=""
           className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
         />

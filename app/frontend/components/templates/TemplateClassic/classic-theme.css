@@ -1,0 +1,249 @@
+/* ============ TemplateClassic/classic-theme.css ============ */
+/* Thème + animations propres au template Classic. Fichier self-contained :
+   importé uniquement par TemplateClassic/Index.tsx, jamais par le reste de
+   l'app (chaque template garde ses propres couleurs/polices/animations). */
+
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #E35336;   /* Terracotta — valeur de repli si le client n'a pas encore choisi sa couleur */
+  --color-vert: #5C6E4F;      /* Vert de gris */
+  --color-brand-sage: #5C6E4F; /* Alias de `vert` : FirstSection/Footer/SecondSection/ThirdSection
+                                   utilisent `brand-sage`, FormSection/ProgramSection utilisent `vert` —
+                                   même couleur, deux noms déjà présents dans le code existant. */
+  --color-ivoire: #FBF3E7;     /* Ivoire (dérivé de blanc) */
+  --color-brunCacao: #3B2A20;  /* Brun cacao */
+  --font-script: "Dancing Script", cursive;
+}
+
+/* index.css */
+
+.cube-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transform: rotateY(var(--rotate-y, 0deg)) translateZ(var(--translate-z, 0px));
+  opacity: var(--slide-opacity, 1);
+  z-index: var(--slide-z, 1);
+  transition:
+    transform 1.4s cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 1.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.thumbnail-item {
+  position: absolute;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transform: translateX(var(--thumb-x, 0px)) scale(var(--thumb-scale, 1));
+  opacity: var(--thumb-opacity, 1);
+  z-index: var(--thumb-z, 1);
+  transition:
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wheel-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 1800px;
+  overflow: hidden;
+}
+
+.wheel-ring {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 1.3s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.wheel-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  backface-visibility: hidden;
+}
+
+/* FirstSection */
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.anim-item {
+  opacity: 0;
+  animation: fadeSlideUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.anim-item--1 { animation-delay: 0.3s; }
+.anim-item--2 { animation-delay: 0.65s; }
+.anim-item--3 { animation-delay: 1s; }
+
+/* SecondSection */
+
+@keyframes fadeScaleUp {
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes fadeDropDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes drawHeart {
+  from { stroke-dashoffset: 200; opacity: 0; }
+  to { stroke-dashoffset: 0; opacity: 1; }
+}
+
+.ss-item {
+  opacity: 0;
+}
+.in-view .ss-item {
+  animation: fadeSlideUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.ss-calendar-card {
+  opacity: 0;
+}
+.in-view .ss-calendar-card {
+  animation: fadeScaleUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.ss-header-item,
+.ss-day-item {
+  opacity: 0;
+}
+.in-view .ss-header-item,
+.in-view .ss-day-item {
+  animation: fadeDropDown 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.ss-heart-path {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  opacity: 0;
+}
+.in-view .ss-heart-path {
+  animation: drawHeart 1.3s ease-in-out forwards;
+  animation-delay: 1.9s;
+}
+
+/* ThirdSection */
+
+.ts-item {
+  opacity: 0;
+}
+.in-view .ts-item {
+  animation: fadeSlideUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.ts-track {
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ts-track--no-transition {
+  transition: none;
+}
+
+.ts-map-btn {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.ts-map-btn:hover {
+  transform: scale(1.03);
+}
+.ts-map-btn:active {
+  transform: scale(0.97);
+}
+
+/* ProgramSection */
+
+@keyframes fadeSlideUpSmall {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeFromLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeFromRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.ps-item {
+  opacity: 0;
+}
+.in-view .ps-item {
+  animation: fadeSlideUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.ps-row-item {
+  opacity: 0;
+}
+.in-view .ps-row-item {
+  animation: fadeSlideUpSmall 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.ps-from-left {
+  opacity: 0;
+}
+.in-view .ps-from-left {
+  animation: fadeFromLeft 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.ps-from-right {
+  opacity: 0;
+}
+.in-view .ps-from-right {
+  animation: fadeFromRight 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+/* FormSection */
+
+.sf-item {
+  opacity: 0;
+}
+.in-view .sf-item {
+  animation: fadeSlideUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.sf-confirm {
+  animation: fadeSlideUpSmall 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.sf-submit-btn {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.sf-submit-btn:hover {
+  transform: scale(1.02);
+}
+.sf-submit-btn:active {
+  transform: scale(0.97);
+}
+
+/* Footer */
+
+.ft-item {
+  opacity: 0;
+}
+.in-view .ft-item {
+  animation: fadeSlideUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}

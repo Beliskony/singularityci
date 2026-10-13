@@ -20,6 +20,32 @@ export interface TemplateFieldSchema {
   maxProgramItems?: number;
 }
 
+export interface TemplateColorField {
+  key: string;
+  label: string;
+  defaultValue: string;
+}
+
+export interface TemplateStyleOption {
+  value: string;
+  label: string;
+}
+
+export interface TemplateStyleField {
+  key: string;
+  label: string;
+  options: TemplateStyleOption[];
+  defaultValue: string;
+}
+
+export interface TemplateFieldSchema {
+  colorFields: TemplateColorField[];
+  textFields: TemplateTextField[];
+  styleFields?: TemplateStyleField[]; // nouveau
+  maxImagesByRole: Record<"HERO" | "GALLERY" | "VENUE", number>;
+  maxProgramItems?: number;
+}
+
 export const TEMPLATE_FIELD_SCHEMAS: Record<string, TemplateFieldSchema> = {
   classic: {
     colorFields: [
@@ -31,6 +57,18 @@ export const TEMPLATE_FIELD_SCHEMAS: Record<string, TemplateFieldSchema> = {
       { key: "venue", label: "Lieu de l'événement", defaultValue: "", maxLength: 100 },
       { key: "rsvpDeadline", label: "Date limite de réponse", defaultValue: "", maxLength: 30 },
     ],
+      styleFields: [
+    {
+      key: "fontStyle",
+      label: "Style d'écriture",
+      defaultValue: "script",
+      options: [
+        { value: "script", label: "Manuscrit élégant" },
+        { value: "serif", label: "Classique sérieux" },
+        { value: "modern", label: "Moderne épuré" },
+      ],
+    },
+  ],
     maxImagesByRole: { HERO: 1, GALLERY: 5, VENUE: 3 },
     maxProgramItems: 8,
   },

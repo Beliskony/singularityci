@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Parisienne&display=swap');
+
+@theme inline {
+  --color-cream: #F5F0E6;
+  --color-ink: #2B2420;
+  --color-sand: #E8DFCB;
+  --color-dust: #9C9080;
+  --font-script: "Parisienne", cursive;
+}
+
+.ec-reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--delay, 0s);
+}
+.in-view .ec-reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes ec-ornament-in {
+  from { opacity: 0; transform: scaleX(0.3); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+.ec-intro-ornament {
+  animation: ec-ornament-in 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  opacity: 0;
+}
+
+@keyframes ec-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.ec-intro-amp {
+  animation: ec-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+@keyframes ec-amp-settle {
+  0% { opacity: 0; transform: scale(0.92) translateY(8px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.ec-intro-amp-mark {
+  animation: ec-amp-settle 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.ec-intro-cta {
+  animation: ec-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ec-reveal, .ec-intro-ornament, .ec-intro-amp, .ec-intro-cta, .ec-intro-amp-mark {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

@@ -6,6 +6,7 @@ import type { IProgramItem } from "@/app/server/sites/ISite";
 interface ProgramSectionProps {
   eventDate: Date;
   programItems: IProgramItem[]; // vient de ISite.programItems, plus de tableau codé en dur
+  title?: string; // vient de customTexts.programTitle, fallback "Programme du jour !"
 }
 
 function useCountdown(targetDate: Date) {
@@ -25,7 +26,7 @@ function useCountdown(targetDate: Date) {
   return daysLeft;
 }
 
-const ProgramSection = ({ eventDate, programItems }: ProgramSectionProps) => {
+const ProgramSection = ({ eventDate, programItems, title }: ProgramSectionProps) => {
   const daysLeft = useCountdown(eventDate);
   const { ref, inView } = useInView<HTMLElement>(0.3);
 
@@ -37,11 +38,11 @@ const ProgramSection = ({ eventDate, programItems }: ProgramSectionProps) => {
       }`}
     >
       <div className="ps-item flex mb-5" style={{ "--delay": "0s" } as React.CSSProperties}>
-        <img src="/templates/classic/flowersProg.png" alt="" className="w-28 h-28 sm:w-24 sm:h-24 object-contain" />
+        <img src="/classiqueTemplate/flowersProg.png" alt="" className="w-28 h-28 sm:w-24 sm:h-24 object-contain" />
       </div>
 
       <div className="ps-item flex" style={{ "--delay": "0.15s" } as React.CSSProperties}>
-        <h2 className="text-4xl sm:text-5xl text-vert mb-8 font-bold">Programme du jour !</h2>
+        <h2 className="text-4xl sm:text-5xl text-vert mb-8 font-bold">{title || "Programme du jour !"}</h2>
       </div>
 
       <div className="flex flex-col items-center justify-center w-full max-w-2xl text-center">
@@ -70,7 +71,7 @@ const ProgramSection = ({ eventDate, programItems }: ProgramSectionProps) => {
         style={{ "--delay": `${0.4 + programItems.length * 0.15 + 0.2}s` } as React.CSSProperties}
       >
         <img
-          src="/templates/classic/gauche.png"
+          src="/classiqueTemplate/gauche.png"
           alt=""
           className="ps-from-left w-20 object-contain select-none pointer-events-none"
         />
@@ -79,7 +80,7 @@ const ProgramSection = ({ eventDate, programItems }: ProgramSectionProps) => {
           <p className="text-3xl text-vert">{daysLeft > 1 ? "Jours restants" : "Jour restant"}</p>
         </div>
         <img
-          src="/templates/classic/droite.png"
+          src="/classiqueTemplate/droite.png"
           alt=""
           className="ps-from-right w-20 object-contain select-none pointer-events-none"
         />

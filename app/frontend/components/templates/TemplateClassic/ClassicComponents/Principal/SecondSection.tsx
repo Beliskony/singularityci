@@ -26,7 +26,10 @@ const SecondSection = ({ eventDate, welcomeMessage }: SecondSectionProps) => {
   return (
     <section
       ref={ref}
-      className={`relative isolate flex flex-col bg-primary items-center justify-center w-full bg-brand-sage py-16 px-4 overflow-hidden ${
+      // Était : "bg-primary ... bg-brand-sage" (deux fonds sur le même élément,
+      // le second écrasait toujours le premier) — on ne garde que brand-sage,
+      // cohérent avec FirstSection/ThirdSection/Footer.
+      className={`relative isolate flex flex-col items-center justify-center w-full bg-brand-sage py-16 px-4 overflow-hidden ${
         inView ? "in-view" : ""
       }`}
     >
@@ -39,7 +42,7 @@ const SecondSection = ({ eventDate, welcomeMessage }: SecondSectionProps) => {
 
       <div className="ss-item relative w-[75%] h-64 max-w-xs flex justify-center items-center aspect-square mt-10 lg:max-w-65">
         <img
-          src="/templates/classic/illustration1.png"
+          src="/classiqueTemplate/illustration1.png"
           alt=""
           className="w-[70%] h-full object-cover rounded-full"
         />
