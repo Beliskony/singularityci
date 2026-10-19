@@ -6,7 +6,6 @@ import { HowItWorks } from "@/app/frontend/components/principal/landing/HowItWor
 import { TemplatesShowcase } from "@/app/frontend/components/principal/landing/TemplatesShowcase";
 import { Features } from "@/app/frontend/components/principal/landing/Features";
 import { Testimonials } from "@/app/frontend/components/principal/landing/Testimonials";
-import { Pricing } from "@/app/frontend/components/principal/landing/Pricing";
 import { FAQ } from "@/app/frontend/components/principal/landing/FAQ";
 import { FinalCTA } from "@/app/frontend/components/principal/landing/FinalCTA";
 import { Footer } from "@/app/frontend/components/principal/landing/Footer";
@@ -21,7 +20,6 @@ export default function HomePage() {
       <TemplatesShowcase />
       <Features />
       <Testimonials />
-      <Pricing />
       <FAQ />
       <FinalCTA />
       <Footer />

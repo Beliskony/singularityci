@@ -1,37 +1,27 @@
 // ============ app/api/client/account/route.ts ============
+// Suppression du compte (soft delete). Refusée si un site est ACTIVE ou
+// PENDING_PAYMENT (409 CANNOT_DELETE_ACCOUNT_WITH_ACTIVE_SITES).
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
-import { IClientAuthPayload } from "@/app/server/client/IClient";
 import { getClientService } from "@/app/server/client/client.container";
-
-const JWT_SECRET = process.env.JWT_SECRET!;
+import { getClientIdOrNull, mapServiceError, unauthenticated } from "@/app/server/shared/apiAuth";
 
 export async function DELETE() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("client_session")?.value;
-  if (!token) return NextResponse.json({ error: "NOT_AUTHENTICATED" }, { status: 401 });
-
-  let session: IClientAuthPayload;
-  try {
-    session = jwt.verify(token, JWT_SECRET) as IClientAuthPayload;
-  } catch {
-    return NextResponse.json({ error: "INVALID_SESSION" }, { status: 401 });
-  }
+  const clientId = await getClientIdOrNull();
+  if (!clientId) return unauthenticated();
 
   try {
-    const clientService = getClientService();
-    await clientService.requestAccountDeletion(session.clientId);
-
-    // Le compte est supprimé (soft delete) : on invalide la session côté navigateur
-    cookieStore.delete("client_session");
-
-    return NextResponse.json({ message: "Compte supprimé." });
-  } catch (err) {
-    if (err instanceof Error && err.name === "BusinessRuleError") {
-      return NextResponse.json({ error: err.message }, { status: 400 });
-    }
-    console.error("delete account error:", err);
-    return NextResponse.json({ error: "INTERNAL_ERROR" }, { status: 500 });
+    await getClientService().requestAccountDeletion(clientId);
+    const res = NextResponse.json({ success: true });
+    // Même attributs qu'à la création du cookie (cf. /api/client/logout).
+    res.cookies.set("client_session", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 0,
+    });
+    return res;
+  } catch (error) {
+    return mapServiceError(error);
   }
 }

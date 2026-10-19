@@ -9,7 +9,7 @@ function mapRowToTemplate(row: any): ITemplate {
     name: row.name,
     slug: row.slug,
     description: row.description ?? undefined,
-    price: row.price,
+    price: row.price_xof,
     previewImages: JSON.parse(row.preview_images ?? "[]"),
     isActive: !!row.is_active,
     createdAt: row.created_at,

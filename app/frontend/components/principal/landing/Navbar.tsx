@@ -177,7 +177,7 @@ export function Navbar() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <img src= "/logo/singularity_logo_blanc.png" alt="Singularity.ci" className="w-8 h-8" />
-            <span className="font-display italic text-base text-foreground">Singularity</span>
+            <span className={`font-display italic text-base ${scrolled ? "text-foreground" : "text-white/90"}`}>Singularity</span>
           </Link>
 
           <nav className={`hidden md:flex items-center gap-8 text-sm transition-colors ${scrolled ? "text-foreground" : "text-white/90"}`}>

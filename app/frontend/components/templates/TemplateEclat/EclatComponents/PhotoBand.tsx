@@ -3,12 +3,16 @@ import { useInView } from "../hooks/useInView";
 interface PhotoBandProps {
   image?: string;
   quote?: string;
+  themeColors?: Record<string, string>;
 }
 
-const PhotoBand = ({ image, quote }: PhotoBandProps) => {
+const PhotoBand = ({ image, quote, themeColors }: PhotoBandProps) => {
   const { ref, inView } = useInView<HTMLDivElement>(0.15);
+  const c = (key: string) => (themeColors?.[key] ? { color: themeColors[key] } : undefined);
+  const bg = themeColors?.photoBandBg ? { backgroundColor: themeColors.photoBandBg } : undefined;
+
   return (
-    <div ref={ref} className={`px-8 ${inView ? "in-view" : ""}`}>
+    <div ref={ref} className={`px-8 ${inView ? "in-view" : ""}`} style={bg}>
       <div className="ec-reveal relative aspect-square bg-sand overflow-hidden" style={{ "--delay": "0s" } as React.CSSProperties}>
         {image ? (
           <img src={image} alt="" className="w-full h-full object-cover" />
@@ -17,7 +21,7 @@ const PhotoBand = ({ image, quote }: PhotoBandProps) => {
         )}
         <span className="absolute top-3 right-3 text-[10px] tracking-wide text-white/90 bg-black/30 px-2 py-0.5">N°01</span>
       </div>
-      <p className="ec-reveal font-script text-xl leading-relaxed text-(--text-on-light) text-center mt-6" style={{ "--delay": "0.15s" } as React.CSSProperties}>
+      <p className="ec-reveal font-script text-xl leading-relaxed text-(--text-on-light) text-center mt-6" style={{ "--delay": "0.15s", ...c("photoBandQuoteColor") } as React.CSSProperties}>
         « {quote || "Deux chemins qui se rencontrent, un seul qui continue."} »
       </p>
     </div>

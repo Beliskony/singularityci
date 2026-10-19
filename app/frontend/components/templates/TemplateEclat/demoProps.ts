@@ -8,7 +8,13 @@ export const eclatDemoProps: TemplateDemoProps = {
   galleryImages: ["/eclatTemplate/gallery-1.jpg", "/eclatTemplate/gallery-2.jpg", "/eclatTemplate/gallery-3.jpg"],
   venueImages: ["/eclatTemplate/venue.jpg"],
   venueName: "Jardin Botanique d'Abidjan",
-  themeColors: { primary: "#B8935A", textOnLight: "#2B2420", textOnDark: "#F5F0E6" },
+  themeColors: { 
+    primary: "#B8935A",
+    textOnLight: "#2B2420",
+    textOnDark: "#F5F0E6",
+    venueBg: "#F0E8D8",       // test: fond différent pour la section lieu
+    rsvpAcceptBg: "#6B8F71",
+  },
   customTexts: {
     heroTitle: "Notre commencement",
     welcomeEyebrow: "Un nouveau départ",

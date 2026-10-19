@@ -20,10 +20,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect("/login");
   }
 
-  const client = await getClientService().getProfile(session.clientId);
+  // Un JWT encore valide pour un compte supprimé ne doit pas finir en erreur
+  // 500 : on renvoie vers la connexion.
+  let client;
+  try {
+    client = await getClientService().getProfile(session.clientId);
+  } catch (error) {
+    if (error instanceof Error && error.name === "NotFoundError") redirect("/login");
+    throw error;
+  }
 
   return (
-    <div className="min-h-dvh flex bg-background">
+    <div className="min-h-dvh flex flex-col md:flex-row bg-background">
       <DashboardSidebar client={{ fullName: client.fullName, email: client.email }} />
       <main className="flex-1 min-w-0">{children}</main>
     </div>

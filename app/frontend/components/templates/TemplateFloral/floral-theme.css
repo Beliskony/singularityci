@@ -1,0 +1,78 @@
+/* ============================================================
+   TemplateFloral — theme scopé (jamais touché par globals.css)
+   Palette : bordeaux profond / or / crème, inspirée du faire-part
+   de référence (sceau de cire, bouquets, calendrier, dress-code).
+   Typographie : Cormorant Garamond (serif élégant, corps + titres)
+   + Tangerine (script, pour les prénoms des mariés).
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Tangerine:wght@400;700&display=swap');
+
+@theme inline {
+  --color-burgundy: #4a0e1a;
+  --color-burgundy-deep: #330a12;
+  --color-wine: #6e1b2b;
+  --color-gold: #c9a24a;
+  --color-gold-soft: #d8bd80;
+  --color-cream: #f4ead9;
+  --color-cream-soft: #efe0c8;
+
+  --font-serif: "Cormorant Garamond", serif;
+  --font-script: "Tangerine", cursive;
+}
+
+/* -------- reveal-on-scroll (même pattern que Classic/Éclat) -------- */
+.fl-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.fl-reveal.fl-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* -------- intro / sceau de cire -------- */
+@keyframes fl-seal-pop {
+  0% { opacity: 0; transform: scale(0.6) rotate(-8deg); }
+  60% { opacity: 1; transform: scale(1.08) rotate(2deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+@keyframes fl-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fl-line-grow {
+  from { width: 0; }
+  to { width: 64px; }
+}
+.fl-intro-seal {
+  animation: fl-seal-pop 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.fl-intro-names {
+  animation: fl-fade-up 0.9s ease 0.5s both;
+}
+.fl-intro-date {
+  animation: fl-fade-up 0.9s ease 0.8s both;
+}
+.fl-intro-cta {
+  animation: fl-fade-up 0.9s ease 1.1s both;
+}
+.fl-intro-line {
+  animation: fl-line-grow 0.8s ease 0.7s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-reveal,
+  .fl-intro-seal,
+  .fl-intro-names,
+  .fl-intro-date,
+  .fl-intro-cta,
+  .fl-intro-line {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    width: 64px !important;
+  }
+}

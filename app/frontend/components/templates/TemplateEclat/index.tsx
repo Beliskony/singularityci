@@ -64,13 +64,15 @@ export default function TemplateEclat({
         heroImage={heroImage}
         venueName={venueName}
         title={customTexts?.heroTitle}
+        themeColors={themeColors}
       />
       <WelcomeSection
         eyebrow={customTexts?.welcomeEyebrow}
         title={customTexts?.welcomeTitle}
         welcomeMessage={customTexts?.welcomeMessage}
+        themeColors={themeColors}
       />
-      <PhotoBand image={galleryImages?.[0]} quote={customTexts?.quote} />
+      <PhotoBand image={galleryImages?.[0]} quote={customTexts?.quote} themeColors={themeColors} />
       <StorySection
         eyebrow={customTexts?.storyEyebrow}
         title={customTexts?.storyTitle}
@@ -78,24 +80,33 @@ export default function TemplateEclat({
         chapterLabel={customTexts?.chapterLabel}
         chapterTitle={customTexts?.chapterTitle}
         excerpt={customTexts?.storyExcerpt}
+        image={galleryImages?.[1]}
+        themeColors={themeColors}
       />
       <InvitationSection
         groomName={groomName}
         brideName={brideName}
         eventDate={eventDate}
         body={customTexts?.invitationBody}
+        themeColors={themeColors}
       />
-      <CalendarCountdown eventDate={eventDate} />
-      <ProgramTimeline title={customTexts?.programTitle} programItems={programItems ?? []} />
+      <CalendarCountdown eventDate={eventDate} themeColors={themeColors} />
+      <ProgramTimeline title={customTexts?.programTitle} programItems={programItems ?? []} themeColors={themeColors} />
       <VenueSection
         venueName={venueName}
         venueImage={venueImages?.[0]}
         address={customTexts?.venueAddress}
         eventDate={eventDate}
+        themeColors={themeColors}
       />
-      <RsvpTicket rsvpDeadlineLabel={customTexts?.rsvpDeadline} onSubmitRsvp={onSubmitRsvp} />
-      <GuestbookSection />
-      <Footer groomName={groomName} brideName={brideName} closingImage={galleryImages?.[galleryImages.length - 1]} />
+      <RsvpTicket rsvpDeadlineLabel={customTexts?.rsvpDeadline} onSubmitRsvp={onSubmitRsvp} themeColors={themeColors} />
+      <GuestbookSection themeColors={themeColors} />
+      <Footer
+        groomName={groomName}
+        brideName={brideName}
+        closingImage={galleryImages?.[galleryImages.length - 1]}
+        themeColors={themeColors}
+      />
     </div>
   );
 }

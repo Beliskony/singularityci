@@ -23,7 +23,7 @@ const testimonials = [
 export function Testimonials() {
   return (
     <section id="avis" className="max-w-6xl mx-auto px-6 py-28">
-      <h2 className="font-display text-3xl md:text-4xl mb-16 max-w-lg">
+      <h2 className="font-display text-3xl md:text-4xl mb-16 max-w-6xl">
         Des couples qui ont confié leur grand jour à Singularity.ci
       </h2>
       <div className="grid md:grid-cols-3 gap-8">

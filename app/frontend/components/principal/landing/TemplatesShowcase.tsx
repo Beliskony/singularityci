@@ -4,13 +4,17 @@ import Image from "next/image";
 import { getTemplateService } from "@/app/server/templates/template.container";
 import { getTemplateCover } from "@/app/frontend/components/templates/registry";
 
-function formatPrice(xof: number): string {
-  return new Intl.NumberFormat("fr-FR").format(xof) + " XOF";
+function formatPrice(xof: number | string | null | undefined): string {
+  const value = typeof xof === "string" ? parseFloat(xof) : xof;
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return "Prix non défini";
+  }
+  return new Intl.NumberFormat("fr-FR").format(value) + " XOF";
 }
 
 const comingSoon = [
-  { name: "Floral", tagline: "Végétal et romantique, tons sauge" },
-  { name: "Moderne", tagline: "Épuré et graphique, noir et blanc" },
+  { name: "Lagacy", tagline: "melange entre moderne et romantique" },
+  { name: "MuchLove", tagline: "Épuré et graphique, un amour autrement" },
 ];
 
 export async function TemplatesShowcase() {

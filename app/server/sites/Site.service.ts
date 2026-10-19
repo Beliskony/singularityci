@@ -182,15 +182,20 @@ export class SiteService {
 async getSiteForEditing(
   clientId: string,
   siteId: string
-): Promise<{ site: ISite; images: ISiteImage[]; fieldSchema: TemplateFieldSchema }> {
+): Promise<{
+  site: ISite;
+  images: ISiteImage[];
+  fieldSchema: TemplateFieldSchema;
+  templateSlug: string;
+}> {
   const site = await this.getOwnedSite(clientId, siteId);
  
-  const [images, fieldSchema] = await Promise.all([
+  const [images, templateSlug] = await Promise.all([
     this.imageRepo.findBySiteId(siteId),
-    this.getFieldSchemaForSite(site),
+    this.templateRepo.getSlugById(site.templateId),
   ]);
  
-  return { site, images, fieldSchema };
+  return { site, images, fieldSchema: getTemplateFieldSchema(templateSlug), templateSlug };
 }
 
   async removeImage(clientId: string, siteId: string, imageId: string): Promise<void> {

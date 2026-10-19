@@ -5,6 +5,7 @@ import { useInView } from "../hooks/useInView";
 
 interface CalendarCountdownProps {
   eventDate: Date;
+  themeColors?: Record<string, string>;
 }
 
 function getMonthMatrix(year: number, month: number): (number | null)[][] {
@@ -44,44 +45,42 @@ function useCountdown(target: Date) {
   return remaining;
 }
 
-function buildCalendarLink(eventDate: Date, title: string): string {
-  const dt = eventDate.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-  return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${dt}/${dt}`;
-}
-
 const WEEKDAYS = ["L", "M", "M", "J", "V", "S", "D"];
 
-const CalendarCountdown = ({ eventDate }: CalendarCountdownProps) => {
+const CalendarCountdown = ({ eventDate, themeColors }: CalendarCountdownProps) => {
   const { ref, inView } = useInView<HTMLDivElement>(0.15);
   const { days, hours, minutes, seconds } = useCountdown(eventDate);
   const weeks = getMonthMatrix(eventDate.getFullYear(), eventDate.getMonth());
   const targetDay = eventDate.getDate();
-  const calendarUrl = buildCalendarLink(eventDate, "Notre mariage");
+  const c = (key: string) => (themeColors?.[key] ? { color: themeColors[key] } : undefined);
+  const bg = themeColors?.calendarBg ? { backgroundColor: themeColors.calendarBg } : undefined;
+  const cardBg = themeColors?.calendarCardBg ? { backgroundColor: themeColors.calendarCardBg } : undefined;
 
   return (
-    <div ref={ref} className={`bg-cream px-8 pt-4 pb-16 ${inView ? "in-view" : ""}`}>
-      <div className="ec-reveal border border-ink/15 bg-sand/40 p-6" style={{ "--delay": "0s" } as React.CSSProperties}>
+    <div ref={ref} className={`bg-cream px-8 pt-4 pb-16 ${inView ? "in-view" : ""}`} style={bg}>
+      <div className="ec-reveal border border-ink/15 bg-sand/40 p-6" style={{ "--delay": "0s", ...cardBg } as React.CSSProperties}>
         <div className="grid grid-cols-7 gap-y-2 text-center mb-4">
           {WEEKDAYS.map((d, i) => (
-            <span key={i} className="text-[11px] tracking-wide text-dust">{d}</span>
+            <span key={i} className="text-[11px] tracking-wide text-dust" style={c("calendarWeekdayColor")}>{d}</span>
           ))}
           {weeks.flat().map((day, i) => (
             <span
               key={i}
-              className={`text-[13px] py-1 ${
+              className={`text-[13px] py-1 ${day === targetDay ? "rounded-full" : ""}`}
+              style={
                 day === targetDay
-                  ? "bg-(--primary) text-(--text-on-dark) rounded-full"
+                  ? { backgroundColor: themeColors?.calendarHighlightBg || "var(--primary)", color: themeColors?.calendarHighlightTextColor || "var(--text-on-dark)" }
                   : day
-                  ? "text-ink/70"
-                  : ""
-              }`}
+                  ? { color: themeColors?.calendarDayColor || "rgb(43 36 32 / 0.7)" }
+                  : undefined
+              }
             >
               {day ?? ""}
             </span>
           ))}
         </div>
 
-        <p className="text-center text-xs tracking-wide text-dust mb-4">
+        <p className="text-center text-xs tracking-wide text-dust mb-4" style={c("calendarCaptionColor")}>
           {days > 0 ? `${days} jours restants` : "C'est aujourd'hui !"}
         </p>
 
@@ -93,12 +92,13 @@ const CalendarCountdown = ({ eventDate }: CalendarCountdownProps) => {
             { label: "sec", value: seconds },
           ].map((item) => (
             <div key={item.label} className="text-center">
-              <p className="font-script text-3xl text-(--text-on-light) leading-none">{String(item.value).padStart(2, "0")}</p>
-              <p className="text-[10px] tracking-wide text-dust uppercase mt-1">{item.label}</p>
+              <p className="font-script text-3xl text-(--text-on-light) leading-none" style={c("calendarNumberColor")}>
+                {String(item.value).padStart(2, "0")}
+              </p>
+              <p className="text-[10px] tracking-wide text-dust uppercase mt-1" style={c("calendarLabelColor")}>{item.label}</p>
             </div>
           ))}
         </div>
-
       </div>
     </div>
   );

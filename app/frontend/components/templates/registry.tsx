@@ -8,9 +8,9 @@ import { classicDemoProps } from "./TemplateClassic/DemoProps";
 import TemplateEclat from "./TemplateEclat/index";
 import TemplateEclatCover from "./TemplateEclat/cover.png";
 import { eclatDemoProps } from "./TemplateEclat/demoProps";
-// import TemplateFloral from "./TemplateFloral/Index";
-// import TemplateFloralCover from "./TemplateFloral/cover.png";
-// import { floralDemoProps } from "./TemplateFloral/demoProps";
+import TemplateFloral from "./TemplateFloral/index";
+import TemplateFloralCover from "./TemplateFloral/cover.png";
+import { floralDemoProps } from "./TemplateFloral/demoProps";
 import type { SubmitRsvpInput } from "@/app/server/rsvp/RsvpSchemaZod";
 import type { IProgramItem } from "@/app/server/sites/ISite";
 
@@ -24,6 +24,7 @@ export interface TemplateRenderProps {
   galleryImages: string[];
   venueImages: string[];
   venueName?: string;
+  venueBg?: string;
   themeColors?: Record<string, string>;
   styleOptions?: Record<string, string>;
   customTexts?: Record<string, string>;
@@ -53,11 +54,11 @@ export const TEMPLATE_REGISTRY: Record<string, TemplateRegistryEntry> = {
     cover: TemplateEclatCover,
     demoProps: eclatDemoProps,
   },
-  // floral: {
-  //   component: TemplateFloral,
-  //   cover: TemplateFloralCover,
-  //   demoProps: floralDemoProps,
-  // },
+  floral: {
+    component: TemplateFloral,
+    cover: TemplateFloralCover,
+    demoProps: floralDemoProps,
+  },
 };
 
 export function getTemplateComponent(slug: string) {
