@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getTemplateService } from "@/app/server/templates/template.container";
 import { getTemplateCover } from "@/app/frontend/components/templates/registry";
+import { BuyButton } from "@/app/frontend/components/purchase/BuyButton";
 
 function formatPrice(xof: number | string | null | undefined): string {
   const value = typeof xof === "string" ? parseFloat(xof) : xof;
@@ -38,40 +39,62 @@ export async function TemplatesShowcase() {
           const cover = getTemplateCover(template.slug);
 
           return (
-            <Link
+            // La carte n'est plus un <Link> global : on ne peut pas imbriquer un lien
+            // (le bouton Acheter) dans un autre lien. L'image ouvre l'aperçu,
+            // le pied de carte porte les deux actions.
+            <div
               key={template.id}
-              href={`/apercu/${template.slug}`}
-              target="_blank"
-              className="group block rounded-3xl overflow-hidden border border-border bg-surface hover:border-gold transition-colors"
+              className="group rounded-3xl overflow-hidden border border-border bg-surface hover:border-gold transition-colors flex flex-col"
             >
-              <div className="aspect-3/4 relative overflow-hidden bg-background">
-                {cover && (
-                  <Image
-                    src={cover}
-                    alt={template.name}
-                    fill
-                    placeholder="blur" // gratuit avec un import statique Next, flou pendant le chargement
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                )}
-                <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors flex items-end justify-center pb-6 opacity-0 group-hover:opacity-100">
-                  <span className="px-4 py-2 rounded-full bg-background text-sm font-medium shadow-lg">
-                    Voir et manipuler l'aperçu
+              <Link href={`/apercu/${template.slug}`} target="_blank" className="block">
+                <div className="aspect-3/4 relative overflow-hidden bg-background">
+                  {cover && (
+                    <Image
+                      src={cover}
+                      alt={template.name}
+                      fill
+                      placeholder="blur" // gratuit avec un import statique Next, flou pendant le chargement
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors flex items-end justify-center pb-6 opacity-0 group-hover:opacity-100">
+                    <span className="px-4 py-2 rounded-full bg-background text-sm font-medium shadow-lg">
+                      Voir et manipuler l'aperçu
+                    </span>
+                  </div>
+                </div>
+              </Link>
+
+              <div className="p-5 flex flex-col gap-4 flex-1">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-display text-lg">{template.name}</p>
+                    {template.description && (
+                      <p className="text-sm text-foreground/60 mt-0.5 line-clamp-2">{template.description}</p>
+                    )}
+                  </div>
+                  <span className="shrink-0 text-sm font-medium px-3 py-1 rounded-full bg-gold/15 text-gold">
+                    {formatPrice(template.price_xof)}
                   </span>
                 </div>
-              </div>
-              <div className="p-5 flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-display text-lg">{template.name}</p>
-                  {template.description && (
-                    <p className="text-sm text-foreground/60 mt-0.5 line-clamp-2">{template.description}</p>
-                  )}
+
+                <div className="mt-auto flex items-center gap-2">
+                  <Link
+                    href={`/apercu/${template.slug}`}
+                    target="_blank"
+                    className="flex-1 text-center px-4 py-2.5 rounded-full border border-border text-sm font-medium text-foreground hover:border-foreground/40 transition-colors"
+                  >
+                    Aperçu
+                  </Link>
+                  <BuyButton
+                    slug={template.slug}
+                    className="flex-1 inline-flex items-center justify-center px-4 py-2.5 rounded-full bg-foreground text-background text-sm font-medium hover:bg-gold hover:text-foreground transition-colors"
+                  >
+                    Acheter
+                  </BuyButton>
                 </div>
-                <span className="shrink-0 text-sm font-medium px-3 py-1 rounded-full bg-gold/15 text-gold">
-                  {formatPrice(template.price)}
-                </span>
               </div>
-            </Link>
+            </div>
           );
         })}
 

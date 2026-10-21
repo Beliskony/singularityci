@@ -4,6 +4,14 @@
 import { useState } from "react";
 
 type Method = "MOBILE_MONEY" | "CARD";
+type Operator = "MTN" | "ORANGE" | "WAVE" | "MOOV";
+
+const OPERATORS: { id: Operator; label: string; hint: string }[] = [
+  { id: "WAVE", label: "Wave", hint: "Page de paiement sécurisée" },
+  { id: "ORANGE", label: "Orange Money", hint: "Page de paiement sécurisée" },
+  { id: "MTN", label: "MTN Money", hint: "Validation sur votre téléphone" },
+  { id: "MOOV", label: "Moov Money", hint: "Page de paiement sécurisée" },
+];
 
 const ERRORS: Record<string, string> = {
   PAYMENT_ALREADY_IN_PROGRESS: "Un paiement est déjà en cours pour ce site. Patientez ou vérifiez votre téléphone.",
@@ -14,6 +22,7 @@ const ERRORS: Record<string, string> = {
 
 export function PayerForm({ siteId }: { siteId: string }) {
   const [method, setMethod] = useState<Method>("MOBILE_MONEY");
+  const [operator, setOperator] = useState<Operator>("WAVE");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,29 +35,53 @@ export function PayerForm({ siteId }: { siteId: string }) {
     }
 
     setLoading(true);
+    // Reste vrai tant qu'on quitte la page : le bouton garde alors « Redirection… ».
+    // Dans tous les autres cas (erreur, réponse inattendue) il doit être réactivé —
+    // avant, les `return` dans le try sautaient setLoading(false) et le bouton restait bloqué.
+    let leaving = false;
+
     try {
       const res = await fetch("/api/payments/initiate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ siteId, method, phone: method === "MOBILE_MONEY" ? phone : undefined }),
+        body: JSON.stringify({ siteId, method, phone: method === "MOBILE_MONEY" ? phone : undefined, operator: method === "MOBILE_MONEY" ? operator : undefined }),
       });
       const data = await res.json().catch(() => ({}));
 
-      if (!res.ok) {
-        setError(ERRORS[data.error] ?? "Impossible de lancer le paiement. Réessayez.");
+      if (res.status === 401) {
+        leaving = true;
+        window.location.href = "/login";
         return;
       }
-      if (data.redirectUrl) {
-        // Navigation complète vers la page de paiement hébergée par FedaPay.
-        window.location.href = data.redirectUrl;
-        return; // on garde le bouton bloqué pendant la redirection
+
+      if (!res.ok) {
+        // Code technique affiché en petit : indispensable pour diagnostiquer sans ouvrir la console.
+        const code = typeof data.error === "string" ? data.error : `HTTP_${res.status}`;
+        setError(ERRORS[code] ?? `Impossible de lancer le paiement. Réessayez. (${code})`);
+        return;
       }
+
+      if (data.redirectUrl) {
+        // Navigation complète vers la page de paiement hébergée par FedaPay (ou la page de retour en mode test).
+        leaving = true;
+        window.location.href = data.redirectUrl;
+        return;
+      }
+
+      // Filet de sécurité : paiement créé sans lien → page de retour, qui lit le statut.
+      if (data.paymentId) {
+        leaving = true;
+        window.location.href = `/dashboard/payments/${data.paymentId}/callback`;
+        return;
+      }
+
       setError("Le fournisseur de paiement n'a pas renvoyé de lien de paiement.");
     } catch {
       setError("Impossible de contacter le serveur.");
+    } finally {
+      if (!leaving) setLoading(false);
     }
-    setLoading(false);
   }
 
   const option = (m: Method, title: string, sub: string) => (
@@ -67,12 +100,29 @@ export function PayerForm({ siteId }: { siteId: string }) {
   return (
     <div>
       <div className="mt-8 space-y-3">
-        {option("MOBILE_MONEY", "Mobile Money", "Orange Money, MTN Money, Moov Money…")}
+        {option("MOBILE_MONEY", "Mobile Money", "Wave, Orange Money, MTN Money, Moov Money")}
         {option("CARD", "Carte bancaire", "Visa, Mastercard")}
       </div>
 
       {method === "MOBILE_MONEY" && (
         <div className="mt-4">
+          <p className="block text-sm font-medium text-foreground mb-1.5">Votre opérateur</p>
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {OPERATORS.map((o) => (
+              <button
+                key={o.id}
+                type="button"
+                onClick={() => setOperator(o.id)}
+                aria-pressed={operator === o.id}
+                className={`text-left px-3 py-2.5 rounded-xl border transition-colors ${
+                  operator === o.id ? "border-gold bg-gold/10" : "border-border hover:border-foreground/30"
+                }`}
+              >
+                <span className="block text-sm font-medium text-foreground">{o.label}</span>
+                <span className="block text-xs text-foreground/50">{o.hint}</span>
+              </button>
+            ))}
+          </div>
           <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-1.5">
             Numéro à débiter
           </label>

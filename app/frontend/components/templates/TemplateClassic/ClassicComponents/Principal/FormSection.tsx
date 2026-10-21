@@ -1,12 +1,14 @@
-// ============ TemplateClassic/components/FormSection.tsx ============
+// ============ TemplateClassic/ClassicComponents/principal/FormSection.tsx ============
 import { useState } from "react";
 import { useInView } from "../../hooks/useInView";
 import type { RsvpFormData } from "../../../registry";
+import type { ClassicImages, ClassicTexts } from "../../ClassicConfig";
 
 type Attendance = "ATTENDING" | "PENDING" | null;
 
 interface FormSectionProps {
-  rsvpDeadlineLabel?: string; // ex: "avant le 26 Juin", vient de customTexts.rsvpDeadline
+  texts: ClassicTexts; // rsvpDeadline : ex. "avant le 26 Juin"
+  imgs: ClassicImages;
   onSubmitRsvp: (data: RsvpFormData) => Promise<void>;
 }
 
@@ -16,8 +18,9 @@ function splitContact(contact: string): { guestEmail?: string; guestPhone?: stri
   return isEmail ? { guestEmail: contact } : { guestPhone: contact };
 }
 
-const FormSection = ({ rsvpDeadlineLabel, onSubmitRsvp }: FormSectionProps) => {
+const FormSection = ({ texts, imgs, onSubmitRsvp }: FormSectionProps) => {
   const { ref, inView } = useInView<HTMLElement>(0.3);
+  const rsvpDeadlineLabel = texts.rsvpDeadline;
   const [fullName, setFullName] = useState("");
   const [contact, setContact] = useState("");
   const [attendance, setAttendance] = useState<Attendance>(null);
@@ -51,7 +54,7 @@ const FormSection = ({ rsvpDeadlineLabel, onSubmitRsvp }: FormSectionProps) => {
   return (
     <section
       ref={ref}
-      className={`relative isolate w-full bg-ivoire py-10 px-6 flex flex-col items-center ${
+      className={`relative isolate w-full bg-(--c-rsvpBg) py-10 px-6 flex flex-col items-center ${
         inView ? "in-view" : ""
       }`}
     >
@@ -59,16 +62,16 @@ const FormSection = ({ rsvpDeadlineLabel, onSubmitRsvp }: FormSectionProps) => {
         className="sf-item relative flex items-center justify-center"
         style={{ "--delay": "0s" } as React.CSSProperties}
       >
-        <h2 className="text-8xl font-bold text-vert tracking-[20px] w-full">RSVP</h2>
+        <h2 className="text-8xl font-bold text-(--c-rsvpTitleColor) tracking-[20px] w-full">{texts.rsvpHeading}</h2>
         <img
-          src="/classiqueTemplate/rsvp-flowers.png"
+          src={imgs.rsvpFlowersImageUrl}
           alt=""
           className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
         />
       </div>
 
       <p
-        className="sf-item mt-4 text-center text-vert font-script text-sm sm:text-3xl italic leading-snug max-w-sm"
+        className="sf-item mt-4 text-center text-(--c-rsvpSubtitleColor) font-script text-sm sm:text-3xl italic leading-snug max-w-sm"
         style={{ "--delay": "0.3s" } as React.CSSProperties}
       >
         {rsvpDeadlineLabel
@@ -82,14 +85,14 @@ const FormSection = ({ rsvpDeadlineLabel, onSubmitRsvp }: FormSectionProps) => {
       >
         {submitted ? (
           <div className="sf-confirm flex flex-col items-center text-center gap-2 py-8">
-            <p className="font-script text-3xl text-vert">Merci !</p>
-            <p className="text-brunCacao text-base">Votre réponse a bien été enregistrée.</p>
+            <p className="font-script text-3xl text-(--c-rsvpTitleColor)">{texts.rsvpThanksTitle}</p>
+            <p className="text-(--c-rsvpLabelColor) text-base">{texts.rsvpThanksText}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="fullName" className="text-sm text-brunCacao tracking-wide">
-                Nom &amp; prénom
+              <label htmlFor="fullName" className="text-sm text-(--c-rsvpLabelColor) tracking-wide">
+                {texts.rsvpNameLabel}
               </label>
               <input
                 id="fullName"
@@ -97,16 +100,16 @@ const FormSection = ({ rsvpDeadlineLabel, onSubmitRsvp }: FormSectionProps) => {
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Votre nom complet"
-                className="w-full px-4 py-3 rounded-xl border border-vert/30 bg-white
-                           text-brunCacao placeholder:text-brunCacao/40
-                           focus:outline-none focus:ring-2 focus:ring-vert/50 transition-shadow"
+                placeholder={texts.rsvpNamePlaceholder}
+                className="w-full px-4 py-3 rounded-xl border border-(--c-rsvpFieldBorderColor)/30 bg-(--c-rsvpFieldBg)
+                           text-(--c-rsvpFieldTextColor) placeholder:text-(--c-rsvpFieldTextColor)/40
+                           focus:outline-none focus:ring-2 focus:ring-(--c-rsvpFieldBorderColor)/50 transition-shadow"
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="contact" className="text-sm text-brunCacao tracking-wide">
-                Contact (téléphone ou email)
+              <label htmlFor="contact" className="text-sm text-(--c-rsvpLabelColor) tracking-wide">
+                {texts.rsvpContactLabel}
               </label>
               <input
                 id="contact"
@@ -114,37 +117,37 @@ const FormSection = ({ rsvpDeadlineLabel, onSubmitRsvp }: FormSectionProps) => {
                 required
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
-                placeholder="Votre numéro ou email"
-                className="w-full px-4 py-3 rounded-xl border border-vert/30 bg-white
-                           text-brunCacao placeholder:text-brunCacao/40
-                           focus:outline-none focus:ring-2 focus:ring-vert/50 transition-shadow"
+                placeholder={texts.rsvpContactPlaceholder}
+                className="w-full px-4 py-3 rounded-xl border border-(--c-rsvpFieldBorderColor)/30 bg-(--c-rsvpFieldBg)
+                           text-(--c-rsvpFieldTextColor) placeholder:text-(--c-rsvpFieldTextColor)/40
+                           focus:outline-none focus:ring-2 focus:ring-(--c-rsvpFieldBorderColor)/50 transition-shadow"
               />
             </div>
 
             <div className="flex flex-col gap-2.5 mt-2">
-              <span className="text-sm text-brunCacao tracking-wide">Serez-vous présent(e) ?</span>
+              <span className="text-sm text-(--c-rsvpLabelColor) tracking-wide">{texts.rsvpAttendanceLabel}</span>
               <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setAttendance("ATTENDING")}
                   className={`flex-1 py-3 rounded-full text-sm font-medium tracking-wide border transition-colors duration-300 ${
                     attendance === "ATTENDING"
-                      ? "bg-vert text-ivoire border-vert"
-                      : "bg-white text-brunCacao border-vert/30"
+                      ? "bg-(--c-rsvpChoiceActiveBg) text-(--c-rsvpChoiceActiveTextColor) border-(--c-rsvpChoiceActiveBg)"
+                      : "bg-(--c-rsvpFieldBg) text-(--c-rsvpFieldTextColor) border-(--c-rsvpFieldBorderColor)/30"
                   }`}
                 >
-                  J'y serai
+                  {texts.rsvpYesLabel}
                 </button>
                 <button
                   type="button"
                   onClick={() => setAttendance("PENDING")}
                   className={`flex-1 py-3 rounded-full text-sm font-medium tracking-wide border transition-colors duration-300 ${
                     attendance === "PENDING"
-                      ? "bg-vert text-ivoire border-vert"
-                      : "bg-white text-brunCacao border-vert/30"
+                      ? "bg-(--c-rsvpChoiceActiveBg) text-(--c-rsvpChoiceActiveTextColor) border-(--c-rsvpChoiceActiveBg)"
+                      : "bg-(--c-rsvpFieldBg) text-(--c-rsvpFieldTextColor) border-(--c-rsvpFieldBorderColor)/30"
                   }`}
                 >
-                  Pas sûr(e)
+                  {texts.rsvpMaybeLabel}
                 </button>
               </div>
             </div>
@@ -154,13 +157,13 @@ const FormSection = ({ rsvpDeadlineLabel, onSubmitRsvp }: FormSectionProps) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="sf-submit-btn mt-4 px-8 py-3.5 rounded-full bg-primary text-ivoire
+              className="sf-submit-btn mt-4 px-8 py-3.5 rounded-full bg-(--c-rsvpButtonBg) text-(--c-rsvpButtonTextColor)
                          text-sm sm:text-base font-medium tracking-widest uppercase
-                         shadow-md shadow-primary/30 ring-1 ring-ivoire/20
-                         hover:shadow-lg hover:shadow-primary/40
+                         shadow-md shadow-(color:--c-rsvpButtonBg)/30 ring-1 ring-(--c-rsvpButtonTextColor)/20
+                         hover:shadow-lg hover:shadow-(color:--c-rsvpButtonBg)/40
                          disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Envoi en cours..." : "Confirmer ma présence"}
+              {isSubmitting ? "Envoi en cours..." : texts.rsvpSubmitLabel}
             </button>
           </form>
         )}

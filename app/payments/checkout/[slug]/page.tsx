@@ -67,12 +67,12 @@ export default async function BuyPage({ params }: { params: Promise<{ slug: stri
           </div>
           {template.description && <p className="text-sm text-foreground/60">{template.description}</p>}
           <ul className="text-sm text-foreground/70 space-y-1.5">
-            <li>✓ Site en ligne jusqu&apos;à la date du mariage</li>
-            <li>✓ Confirmations de présence centralisées</li>
-            <li>✓ Personnalisation illimitée</li>
+            <li>Site en ligne jusqu&apos;à la date du mariage</li>
+            <li>Confirmations de présence centralisées</li>
+            <li> Personnalisation illimitée</li>
           </ul>
           <Link href={`/apercu/${template.slug}`} target="_blank" className="block text-sm text-gold hover:underline">
-            Revoir l&apos;aperçu ↗
+            Revoir l&apos;aperçu
           </Link>
         </aside>
       </div>

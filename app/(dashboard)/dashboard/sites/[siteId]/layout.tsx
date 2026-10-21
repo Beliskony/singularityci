@@ -47,7 +47,7 @@ export default async function SiteHubLayout({
   return (
     <div className="px-6 pt-8 md:pt-12">
       <div className="max-w-5xl mx-auto">
-        <Link href="/dashboard" className="text-sm text-foreground/50 hover:text-gold transition-colors">
+        <Link href="/dashboard" className="md:hidden text-sm text-foreground/50 hover:text-gold transition-colors">
           ← Mes sites
         </Link>
 

@@ -45,6 +45,7 @@ export function PurchaseFlow({ template, pendingSite }: Props) {
   const [subdomain, setSubdomain] = useState("");
   const subdomainTouched = useRef(false);
 
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [availability, setAvailability] = useState<Availability>("idle");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -63,11 +64,12 @@ export function PurchaseFlow({ template, pendingSite }: Props) {
     let cancelled = false;
     const t = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/client/subdomain?value=${encodeURIComponent(subdomain)}`, { credentials: "include" });
+        const res = await fetch(`/api/client/subdomain?value=${encodeURIComponent(subdomain)}${eventDate ? `&date=${eventDate}` : ""}`, { credentials: "include" });
         if (res.status === 401) return router.push(`/login?next=${encodeURIComponent(`/payments/checkout/${template.slug}`)}`);
         const data = await res.json();
         if (cancelled) return;
         setAvailability(!data.valid ? "invalid" : data.available ? "available" : "taken");
+        setSuggestions(Array.isArray(data.suggestions) ? data.suggestions : []);
       } catch {
         if (!cancelled) setAvailability("idle");
       }
@@ -76,7 +78,7 @@ export function PurchaseFlow({ template, pendingSite }: Props) {
       cancelled = true;
       clearTimeout(t);
     };
-  }, [subdomain, router, template.slug]);
+  }, [subdomain, eventDate, router, template.slug]);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -204,6 +206,24 @@ export function PurchaseFlow({ template, pendingSite }: Props) {
           <span className="px-3 flex items-center text-sm text-foreground/50 bg-foreground/5">.singularity.ci</span>
         </div>
         {h && <span className={`mt-1 block text-xs ${h.cls}`}>{h.text}</span>}
+        {availability === "taken" && suggestions.length > 0 && (
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <span className="text-xs text-foreground/50">Disponibles :</span>
+            {suggestions.map((sug) => (
+              <button
+                key={sug}
+                type="button"
+                onClick={() => {
+                  subdomainTouched.current = true;
+                  setSubdomain(sug);
+                }}
+                className="px-3 py-1 rounded-full border border-border text-xs text-foreground hover:border-gold hover:text-gold transition-colors"
+              >
+                {sug}
+              </button>
+            ))}
+          </div>
+        )}
       </label>
 
       {error && <p className="text-sm text-red-600">{error}</p>}

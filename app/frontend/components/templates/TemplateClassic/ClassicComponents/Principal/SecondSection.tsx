@@ -1,9 +1,11 @@
-// ============ TemplateClassic/components/SecondSection.tsx ============
+// ============ TemplateClassic/ClassicComponents/principal/SecondSection.tsx ============
 import { useInView } from "../../hooks/useInView";
+import type { ClassicImages, ClassicTexts } from "../../classicConfig";
 
 interface SecondSectionProps {
   eventDate: Date;
-  welcomeMessage?: string;
+  texts: ClassicTexts;
+  imgs: ClassicImages;
 }
 
 const weekDays = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
@@ -19,40 +21,36 @@ function getCalendarInfo(date: Date) {
   return { daysInMonth, firstDayOffset, monthLabel, weddingDay: date.getDate() };
 }
 
-const SecondSection = ({ eventDate, welcomeMessage }: SecondSectionProps) => {
+const SecondSection = ({ eventDate, texts, imgs }: SecondSectionProps) => {
   const { ref, inView } = useInView<HTMLElement>(0.3);
   const { daysInMonth, firstDayOffset, monthLabel, weddingDay } = getCalendarInfo(eventDate);
 
   return (
     <section
       ref={ref}
-      // Était : "bg-primary ... bg-brand-sage" (deux fonds sur le même élément,
-      // le second écrasait toujours le premier) — on ne garde que brand-sage,
-      // cohérent avec FirstSection/ThirdSection/Footer.
-      className={`relative isolate flex flex-col items-center justify-center w-full bg-brand-sage py-16 px-4 overflow-hidden ${
+      className={`relative isolate flex flex-col items-center justify-center w-full bg-(--c-secondBg) py-16 px-4 overflow-hidden ${
         inView ? "in-view" : ""
       }`}
     >
       <div className="ss-item flex flex-col items-center justify-center w-full max-w-2xl text-center">
-        <p className="text-lg sm:text-xl lg:text-2xl text-ivoire font-medium leading-relaxed">
-          {welcomeMessage ||
-            "Nous vous invitons à partager ce moment unique de notre vie, et à célébrer avec nous le début de notre éternité."}
+        <p className="text-lg sm:text-xl lg:text-2xl text-(--c-secondTextColor) font-medium leading-relaxed">
+          {texts.welcomeMessage}
         </p>
       </div>
 
       <div className="ss-item relative w-[75%] h-64 max-w-xs flex justify-center items-center aspect-square mt-10 lg:max-w-65">
         <img
-          src="/classiqueTemplate/illustration1.png"
+          src={imgs.secondImageUrl}
           alt=""
           className="w-[70%] h-full object-cover rounded-full"
         />
       </div>
 
       <div className="ss-item flex flex-col items-center justify-center w-full max-w-sm text-center">
-        <h3 className="text-4xl sm:text-5xl text-ivoire mb-8 font-script capitalize">{monthLabel}</h3>
+        <h3 className="text-4xl sm:text-5xl text-(--c-secondMonthColor) mb-8 font-script capitalize">{monthLabel}</h3>
 
         <div className="ss-calendar-card w-full">
-          <div className="grid grid-cols-7 text-ivoire/80 text-[11px] sm:text-xs font-medium tracking-wide uppercase mb-4">
+          <div className="grid grid-cols-7 text-(--c-secondWeekdayColor) opacity-80 text-[11px] sm:text-xs font-medium tracking-wide uppercase mb-4">
             {weekDays.map((d) => (
               <span key={d} className="ss-header-item flex items-center justify-center h-6">
                 {d}
@@ -73,7 +71,7 @@ const SecondSection = ({ eventDate, welcomeMessage }: SecondSectionProps) => {
                 <div key={day} className="ss-day-item relative flex items-center justify-center h-9">
                   <span
                     className={`relative z-10 text-sm sm:text-base ${
-                      isWeddingDay ? "text-ivoire font-semibold" : "text-ivoire/90"
+                      isWeddingDay ? "text-(--c-secondActiveDayColor) font-semibold" : "text-(--c-secondDayColor) opacity-90"
                     }`}
                   >
                     {day}
@@ -81,9 +79,9 @@ const SecondSection = ({ eventDate, welcomeMessage }: SecondSectionProps) => {
                   {isWeddingDay && (
                     <svg
                       viewBox="0 0 64 58"
-                      className="absolute w-11 h-12 sm:w-10 sm:h-10 ss-heart-path"
+                      className="absolute w-11 h-12 sm:w-10 sm:h-10 ss-heart-path text-(--c-secondHeartColor)"
                       fill="none"
-                      stroke="white"
+                      stroke="currentColor"
                       strokeWidth="2.5"
                       strokeLinecap="round"
                       strokeLinejoin="round"

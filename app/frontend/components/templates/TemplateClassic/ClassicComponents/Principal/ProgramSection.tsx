@@ -1,12 +1,14 @@
-// ============ TemplateClassic/components/ProgramSection.tsx ============
+// ============ TemplateClassic/ClassicComponents/principal/ProgramSection.tsx ============
 import { useState, useEffect } from "react";
 import { useInView } from "../../hooks/useInView";
 import type { IProgramItem } from "@/app/server/sites/ISite";
+import type { ClassicImages, ClassicTexts } from "../../ClassicConfig";
 
 interface ProgramSectionProps {
   eventDate: Date;
   programItems: IProgramItem[]; // vient de ISite.programItems, plus de tableau codé en dur
-  title?: string; // vient de customTexts.programTitle, fallback "Programme du jour !"
+  texts: ClassicTexts;
+  imgs: ClassicImages;
 }
 
 function useCountdown(targetDate: Date) {
@@ -26,23 +28,23 @@ function useCountdown(targetDate: Date) {
   return daysLeft;
 }
 
-const ProgramSection = ({ eventDate, programItems, title }: ProgramSectionProps) => {
+const ProgramSection = ({ eventDate, programItems, texts, imgs }: ProgramSectionProps) => {
   const daysLeft = useCountdown(eventDate);
   const { ref, inView } = useInView<HTMLElement>(0.3);
 
   return (
     <section
       ref={ref}
-      className={`bg-ivoire isolate flex flex-col items-center justify-center w-full py-16 px-4 ${
+      className={`bg-(--c-programBg) isolate flex flex-col items-center justify-center w-full py-16 px-4 ${
         inView ? "in-view" : ""
       }`}
     >
       <div className="ps-item flex mb-5" style={{ "--delay": "0s" } as React.CSSProperties}>
-        <img src="/classiqueTemplate/flowersProg.png" alt="" className="w-28 h-28 sm:w-24 sm:h-24 object-contain" />
+        <img src={imgs.programFlowersImageUrl} alt="" className="w-28 h-28 sm:w-24 sm:h-24 object-contain" />
       </div>
 
       <div className="ps-item flex" style={{ "--delay": "0.15s" } as React.CSSProperties}>
-        <h2 className="text-4xl sm:text-5xl text-vert mb-8 font-bold">{title || "Programme du jour !"}</h2>
+        <h2 className="text-4xl sm:text-5xl text-(--c-programTitleColor) mb-8 font-bold text-center">{texts.programTitle}</h2>
       </div>
 
       <div className="flex flex-col items-center justify-center w-full max-w-2xl text-center">
@@ -52,14 +54,14 @@ const ProgramSection = ({ eventDate, programItems, title }: ProgramSectionProps)
             className="ps-row-item relative flex flex-col items-center gap-y-1.5 py-4 w-full"
             style={{ "--delay": `${0.4 + index * 0.15}s` } as React.CSSProperties}
           >
-            <h3 className="text-xl text-brunCacao font-medium leading-relaxed tracking-wide">{event.time}</h3>
-            <p className="text-lg text-primary font-medium leading-relaxed">{event.label}</p>
+            <h3 className="text-xl text-(--c-programTimeColor) font-medium leading-relaxed tracking-wide">{event.time}</h3>
+            <p className="text-lg text-(--c-programLabelColor) font-medium leading-relaxed">{event.label}</p>
 
             {index < programItems.length - 1 && (
               <div className="flex items-center w-full mt-3 px-20">
-                <span className="flex-1 h-px bg-brunCacao/40" />
-                <span className="w-1.5 h-1.5 rotate-45 bg-vert mx-3" />
-                <span className="flex-1 h-px bg-brunCacao/40" />
+                <span className="flex-1 h-px bg-(--c-programLineColor)/40" />
+                <span className="w-1.5 h-1.5 rotate-45 bg-(--c-programDiamondColor) mx-3" />
+                <span className="flex-1 h-px bg-(--c-programLineColor)/40" />
               </div>
             )}
           </div>
@@ -71,16 +73,16 @@ const ProgramSection = ({ eventDate, programItems, title }: ProgramSectionProps)
         style={{ "--delay": `${0.4 + programItems.length * 0.15 + 0.2}s` } as React.CSSProperties}
       >
         <img
-          src="/classiqueTemplate/gauche.png"
+          src={imgs.programLeftImageUrl}
           alt=""
           className="ps-from-left w-20 object-contain select-none pointer-events-none"
         />
         <div className="flex flex-col items-center justify-center">
-          <h3 className="text-5xl sm:text-4xl font-bold text-vert">{daysLeft}</h3>
-          <p className="text-3xl text-vert">{daysLeft > 1 ? "Jours restants" : "Jour restant"}</p>
+          <h3 className="text-5xl sm:text-4xl font-bold text-(--c-programCountColor)">{daysLeft}</h3>
+          <p className="text-3xl text-(--c-programCountColor)">{daysLeft > 1 ? texts.daysLeftPlural : texts.daysLeftSingular}</p>
         </div>
         <img
-          src="/classiqueTemplate/droite.png"
+          src={imgs.programRightImageUrl}
           alt=""
           className="ps-from-right w-20 object-contain select-none pointer-events-none"
         />

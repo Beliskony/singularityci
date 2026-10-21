@@ -274,13 +274,13 @@ async getSiteForEditing(
       throw new BusinessRuleError("SITE_NOT_PAYABLE_IN_CURRENT_STATUS");
     }
 
-    const now = new Date();
-    return this.siteRepo.update(siteId, {
-      status: SiteStatus.ACTIVE,
-      purchasedAt: now,
-      expiresAt: site.eventDate,
-      lastPaymentId: paymentId,
-    });
+    // siteRepo.update() ne gère que la personnalisation (noms, couleurs…) : lui passer un statut
+    // envoyait des NULL à sp_site_update_customization (« groom_name cannot be null »).
+    // Les transitions de statut passent par updateStatus → sp_site_activate.
+    await this.siteRepo.updateStatus(siteId, SiteStatus.ACTIVE, { expiresAt: site.eventDate });
+    const activated = await this.siteRepo.findById(siteId);
+    if (!activated) throw new NotFoundError("SITE");
+    return activated;
   }
 
   async expireSite(siteId: string): Promise<void> {
@@ -312,10 +312,10 @@ async getSiteForEditing(
     if (!site) throw new NotFoundError("SITE");
     if (site.status !== SiteStatus.ACTIVE) return site;
 
-    return this.siteRepo.update(siteId, {
-      status: SiteStatus.EXPIRED,
-      expiresAt: new Date(),
-    });
+    await this.siteRepo.updateStatus(siteId, SiteStatus.EXPIRED);
+    const expired = await this.siteRepo.findById(siteId);
+    if (!expired) throw new NotFoundError("SITE");
+    return expired;
   }
 
   // =========================================================
@@ -353,6 +353,10 @@ async getSiteForEditing(
       const field = fieldsByKey.get(key);
       if (!field) throw new BusinessRuleError(`UNKNOWN_TEXT_FIELD: ${key}`);
       if (value.length > field.maxLength) throw new BusinessRuleError(`TEXT_FIELD_TOO_LONG: ${key}`);
+      // Un champ image n'accepte qu'un lien https:// ou un chemin du site (/...) : jamais javascript:, data:…
+      if (field.kind === "image" && !/^(https:\/\/|\/(?!\/))/i.test(value)) {
+        throw new BusinessRuleError(`INVALID_IMAGE_URL: ${key}`);
+      }
     }
   }
 

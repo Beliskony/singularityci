@@ -45,7 +45,7 @@ export function TemplateLivePreview({ slug, data }: Props) {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="relative w-93.75 max-w-full h-180 max-h-[calc(100dvh-9rem)] rounded-[2.5rem] border-10 border-foreground/90 bg-black shadow-xl overflow-hidden">
+      <div className="relative w-93.75 max-w-full h-180 max-h-[calc(100dvh-7rem)] rounded-[2.5rem] border-10 border-foreground/90 bg-black shadow-xl overflow-hidden">
         <iframe
           ref={iframeRef}
           src={`/apercu-live/${slug}`}

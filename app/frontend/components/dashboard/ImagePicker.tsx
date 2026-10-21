@@ -34,8 +34,8 @@ export function ImagePicker({ label, value, defaultValue, onChange, presets = []
   function commitUrl() {
     const v = urlDraft.trim();
     if (!v) return;
-    if (!/^(https?:\/\/|\/)/i.test(v)) {
-      setError("Le lien doit commencer par https:// (ou /).");
+    if (!/^(https:\/\/|\/(?!\/))/i.test(v)) {
+      setError("Le lien doit commencer par https://");
       return;
     }
     setError(null);

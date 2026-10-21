@@ -1,72 +1,54 @@
 // ============ app/api/webhooks/payments/fedapay/route.ts ============
-import { NextResponse } from "next/server";
-import { Webhook, Transaction } from "fedapay";
+// Reçoit les notifications FedaPay (dashboard → Workbench → Webhooks).
+// URL à déclarer : https://<votre-domaine>/api/webhooks/payments/fedapay
+// Cette route doit être publique (pas de cookie de session, exclue d'un éventuel middleware).
+import { NextRequest, NextResponse } from "next/server";
+import { Webhook } from "fedapay";
 import { getPaymentService } from "@/app/server/payments/payment.container";
 
-const WEBHOOK_SECRET = process.env.FEDAPAY_WEBHOOK_SECRET!;
-
-export async function POST(request: Request) {
-  const rawBody = await request.text();
-  const signature = request.headers.get("x-fedapay-signature");
-
-  if (!signature) {
-    return NextResponse.json({ error: "MISSING_SIGNATURE" }, { status: 401 });
+// Le corps brut est indispensable à la vérification de signature : ne jamais passer par req.json().
+export async function POST(req: NextRequest) {
+  const secret = process.env.FEDAPAY_WEBHOOK_SECRET;
+  if (!secret) {
+    console.error("[webhook] FEDAPAY_WEBHOOK_SECRET manquante");
+    return NextResponse.json({ error: "WEBHOOK_NOT_CONFIGURED" }, { status: 500 });
   }
+
+  const rawBody = await req.text();
+  const signature = req.headers.get("x-fedapay-signature") ?? "";
 
   let event: any;
   try {
-    // Le SDK officiel vérifie la signature ET parse le JSON — on ne fait jamais
-    // JSON.parse nous-mêmes sur un body dont la signature n'a pas encore été validée
-    event = Webhook.constructEvent(rawBody, signature, WEBHOOK_SECRET);
+    event = Webhook.constructEvent(rawBody, signature, secret);
   } catch (err) {
-    console.error("FedaPay webhook signature invalide:", err);
-    return NextResponse.json({ error: "INVALID_SIGNATURE" }, { status: 401 });
+    // Signature invalide ou corps altéré : 400, FedaPay ne doit pas réessayer indéfiniment.
+    console.warn("[webhook] signature invalide", (err as Error).message);
+    return NextResponse.json({ error: "INVALID_SIGNATURE" }, { status: 400 });
   }
 
-  // On ne traite que les événements liés au cycle de vie d'une transaction
-  if (!["transaction.approved", "transaction.declined", "transaction.canceled"].includes(event.name)) {
-    return NextResponse.json({ received: true }); // événement ignoré, mais 200 pour éviter les retries FedaPay
+  // La structure de `entity` n'est pas documentée : on lit l'id de la transaction aux deux
+  // endroits plausibles, puis on relit tout (statut, montant) auprès de FedaPay.
+  const name: string = String(event?.name ?? event?.type ?? "");
+  if (!name.startsWith("transaction.")) {
+    return NextResponse.json({ received: true, ignored: name });
   }
-
-  const transactionId = event.entity?.id ?? event.entity_id;
+  const transactionId = event?.entity?.id ?? event?.object_id;
   if (!transactionId) {
-    console.error("FedaPay webhook sans id de transaction:", event);
-    return NextResponse.json({ error: "MALFORMED_EVENT" }, { status: 400 });
+    console.warn("[webhook] id de transaction introuvable dans l'événement", name);
+    return NextResponse.json({ received: true, ignored: "NO_TRANSACTION_ID" });
   }
 
-  // Par sécurité, on ne fait jamais confiance au montant/statut du corps du webhook —
-  // on re-interroge l'API FedaPay pour avoir la donnée de référence
-  let transaction: any;
   try {
-    transaction = await Transaction.retrieve(transactionId);
+    await getPaymentService().syncByProviderRef(String(transactionId));
   } catch (err) {
-    console.error("Impossible de récupérer la transaction FedaPay:", err);
-    return NextResponse.json({ error: "TRANSACTION_FETCH_FAILED" }, { status: 502 });
-  }
-
-  const outcome: "SUCCESS" | "FAILED" = event.name === "transaction.approved" ? "SUCCESS" : "FAILED";
-
-  try {
-    const paymentService = getPaymentService();
-    await paymentService.handleProviderWebhook(
-      String(transaction.id),
-      outcome,
-      Number(transaction.amount)
-    );
-    return NextResponse.json({ received: true });
-  } catch (err) {
-    if (err instanceof Error) {
-      switch (err.name) {
-        case "NotFoundError":
-          return NextResponse.json({ error: err.message }, { status: 404 });
-        case "BusinessRuleError":
-          console.error("WEBHOOK SUSPECT:", err.message, { transactionId });
-          return NextResponse.json({ error: err.message }, { status: 400 });
-        default:
-          break;
-      }
+    if (err instanceof Error && err.name === "NotFoundError") {
+      // Transaction inconnue de notre base (autre application sur le même compte, test manuel…) :
+      // on répond 2xx, sinon FedaPay réessaie 9 fois puis désactive le webhook.
+      return NextResponse.json({ received: true, ignored: "UNKNOWN_TRANSACTION" });
     }
-    console.error("fedapay webhook error:", err);
-    return NextResponse.json({ error: "INTERNAL_ERROR" }, { status: 500 });
+    console.error("[webhook] erreur de traitement", err);
+    return NextResponse.json({ error: "PROCESSING_FAILED" }, { status: 500 }); // FedaPay réessaiera
   }
+
+  return NextResponse.json({ received: true });
 }

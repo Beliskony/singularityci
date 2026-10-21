@@ -27,6 +27,9 @@ const GROUP_LABEL: Record<string, string> = {
   hero: "Accueil",
   welcome: "Bienvenue",
   calendar: "Calendrier",
+  first: "Accueil",
+  second: "Calendrier",
+  third: "Lieu",
   program: "Programme",
   gallery: "Galerie",
   venue: "Lieu",
@@ -76,6 +79,9 @@ export function PersonnalisationStudio({ site, images, fieldSchema, templateSlug
   const [section, setSection] = useState<SectionId>("infos");
   const [mobilePreview, setMobilePreview] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const [photoDrafts, setPhotoDrafts] = useState<Record<string, string>>({});
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   // ---- Sections disponibles selon ce que le template expose ----
@@ -180,6 +186,8 @@ export function PersonnalisationStudio({ site, images, fieldSchema, templateSlug
             ? "Certaines valeurs sont invalides (vérifiez les noms et la date)."
             : code.startsWith("TEXT_FIELD_TOO_LONG")
             ? "Un des textes est trop long."
+            : code.startsWith("INVALID_IMAGE_URL")
+            ? "Un lien d'image est invalide (il doit commencer par https://)."
             : "Une erreur est survenue, réessayez.",
         });
         return;
@@ -191,6 +199,52 @@ export function PersonnalisationStudio({ site, images, fieldSchema, templateSlug
       setFeedback({ type: "error", message: "Impossible de contacter le serveur." });
     } finally {
       setSaving(false);
+    }
+  }
+
+  // ---- Photos (liens https:// tant que l'import de fichiers n'est pas branché) ----
+  async function addPhoto(role: SiteImageRole) {
+    const url = (photoDrafts[role] ?? "").trim();
+    if (!/^https:\/\//i.test(url)) return setPhotoError("Le lien doit commencer par https://");
+    setPhotoBusy(true);
+    setPhotoError(null);
+    try {
+      const res = await fetch(`/api/client/sites/${site.id}/images`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ url, role }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const code: string = data.error ?? "";
+        return setPhotoError(
+          code.startsWith("MAX_IMAGES_REACHED") ? "Nombre maximum de photos atteint." : "Impossible d'ajouter cette photo."
+        );
+      }
+      setPhotoDrafts((p) => ({ ...p, [role]: "" }));
+      router.refresh(); // recharge les photos → l'aperçu se met à jour
+    } catch {
+      setPhotoError("Impossible de contacter le serveur.");
+    } finally {
+      setPhotoBusy(false);
+    }
+  }
+
+  async function removePhoto(imageId: string) {
+    setPhotoBusy(true);
+    setPhotoError(null);
+    try {
+      const res = await fetch(`/api/client/sites/${site.id}/images?imageId=${imageId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) return setPhotoError("Impossible de retirer cette photo.");
+      router.refresh();
+    } catch {
+      setPhotoError("Impossible de contacter le serveur.");
+    } finally {
+      setPhotoBusy(false);
     }
   }
 
@@ -351,18 +405,46 @@ export function PersonnalisationStudio({ site, images, fieldSchema, templateSlug
                     </div>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {roleImages.map((img) => (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img key={img.id} src={img.url} alt="" className="h-20 w-20 rounded-lg object-cover border border-border" />
+                        <div key={img.id} className="relative">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={img.url} alt="" className="h-20 w-20 rounded-lg object-cover border border-border" />
+                          <button
+                            type="button"
+                            disabled={photoBusy}
+                            onClick={() => removePhoto(img.id)}
+                            aria-label="Retirer cette photo"
+                            className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-foreground text-background text-xs leading-none hover:bg-red-600 disabled:opacity-50"
+                          >
+                            ✕
+                          </button>
+                        </div>
                       ))}
-                      <button type="button" disabled title="Import de photos bientôt disponible" className="h-20 w-20 rounded-lg border border-dashed border-border text-foreground/30 text-xs cursor-not-allowed">
-                        Bientôt
-                      </button>
                     </div>
+                    {roleImages.length < max && (
+                      <div className="mt-3 flex gap-2">
+                        <input
+                          value={photoDrafts[role] ?? ""}
+                          onChange={(e) => setPhotoDrafts((p) => ({ ...p, [role]: e.target.value }))}
+                          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addPhoto(role))}
+                          placeholder="https://… lien de la photo"
+                          className="flex-1 min-w-0 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+                        />
+                        <button
+                          type="button"
+                          disabled={photoBusy}
+                          onClick={() => addPhoto(role)}
+                          className="px-3 py-2 rounded-lg bg-foreground text-background text-sm hover:bg-gold hover:text-foreground transition-colors disabled:opacity-50"
+                        >
+                          Ajouter
+                        </button>
+                      </div>
+                    )}
                   </div>
                 );
               })}
+              {photoError && <p className="text-sm text-red-600">{photoError}</p>}
               <p className="text-xs text-foreground/50">
-                L&apos;import de vos photos arrive bientôt. En attendant, l&apos;aperçu utilise des photos d&apos;exemple.
+                Collez le lien https:// d&apos;une photo déjà en ligne. L&apos;import depuis votre appareil arrive bientôt.
               </p>
             </div>
           )}

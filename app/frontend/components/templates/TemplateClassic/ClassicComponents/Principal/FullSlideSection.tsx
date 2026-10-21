@@ -1,4 +1,4 @@
-// ============ TemplateClassic/components/FullSlideSection.tsx ============
+// ============ TemplateClassic/ClassicComponents/principal/FullSlideSection.tsx ============
 import { useState, useCallback, useRef, useLayoutEffect, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -60,7 +60,7 @@ const FullSlideSection = ({ images }: FullSlideSectionProps) => {
   if (total === 0) return null;
 
   return (
-    <section className="relative isolate w-full min-h-screen h-210 overflow-hidden flex flex-col items-center px-3 py-6">
+    <section className="relative isolate w-full bg-(--c-galleryBg) min-h-screen h-210 overflow-hidden flex flex-col items-center px-3 py-6">
       <div ref={viewportRef} className="wheel-viewport relative w-full min-h-125 flex-1 rounded-3xl mt-2">
         {radius > 0 && (
           <div className="wheel-ring" style={{ transform: `rotateY(${rotation}deg)` }}>
@@ -78,10 +78,10 @@ const FullSlideSection = ({ images }: FullSlideSectionProps) => {
         <div className="absolute inset-0 bg-black/10 pointer-events-none rounded-3xl" />
 
         <button onClick={prev} aria-label="Photo précédente" className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center">
-          <ChevronLeft className="w-8 h-8 text-white drop-shadow-md" />
+          <ChevronLeft className="w-8 h-8 text-(--c-galleryArrowColor) drop-shadow-md" />
         </button>
         <button onClick={next} aria-label="Photo suivante" className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center">
-          <ChevronRight className="w-8 h-8 text-white drop-shadow-md" />
+          <ChevronRight className="w-8 h-8 text-(--c-galleryArrowColor) drop-shadow-md" />
         </button>
       </div>
 

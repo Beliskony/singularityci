@@ -3,6 +3,11 @@ import { IPayment, PaymentMethod, PaymentStatus } from "./IPayment";
 import { InitiatePaymentInput } from "./PaymentSchemaZod";
 import { SiteService } from "../sites/Site.service";
 import { SiteStatus } from "../sites/ISite";
+import {
+  SandboxPaymentProvider,
+  SandboxPolicy,
+  SANDBOX_PROVIDER_NAME,
+} from "./PaymentSandbox";
 
 // ---- Contrats des repositories ----
 
@@ -12,6 +17,7 @@ interface PaymentRepository {
   findByProviderRef(ref: string): Promise<IPayment | null>;
   findLatestBySite(siteId: string): Promise<IPayment | null>;
   updateStatus(id: string, status: PaymentStatus): Promise<void>;
+  attachProviderRef(id: string, provider: string, ref: string): Promise<void>;
 }
 
 interface SiteReadRepository {
@@ -22,15 +28,27 @@ interface TemplateRepository {
   getPrice(templateId: string): Promise<number | null>; // null si template inexistant/inactif
 }
 
-// Contrat commun aux deux implémentations (mobile money / carte) — chacune vit dans payments/providers/
-interface PaymentProvider {
+export type MobileMoneyOperator = "MTN" | "ORANGE" | "WAVE" | "MOOV";
+export const MOBILE_MONEY_OPERATORS: readonly MobileMoneyOperator[] = ["MTN", "ORANGE", "WAVE", "MOOV"];
+
+// Contrat commun à toutes les implémentations — chacune vit dans payments/providers/
+export interface PaymentProvider {
+  readonly name: string;
   initiateCharge(params: {
     amount: number;
     reference: string; // notre paymentId interne, pour retrouver le paiement au retour du webhook
     clientPhone?: string; // requis pour mobile money
+    operator?: MobileMoneyOperator; // choisi par le client (MTN, Orange, Wave, Moov)
   }): Promise<{ providerTransactionRef: string; redirectUrl?: string }>;
 
   refund(providerTransactionRef: string, amount: number): Promise<void>;
+
+  // Optionnel : interroge directement le provider pour connaître l'état réel d'une transaction.
+  // Sert de filet quand le webhook n'arrive pas (poste local, retard, webhook désactivé).
+  checkStatus?(providerTransactionRef: string): Promise<{
+    outcome: "SUCCESS" | "FAILED" | "PENDING";
+    amount: number;
+  }>;
 }
 
 interface PaymentProviderResolver {
@@ -66,7 +84,9 @@ export class PaymentService {
     private siteRepo: SiteReadRepository,
     private templateRepo: TemplateRepository,
     private providerResolver: PaymentProviderResolver,
-    private siteService: SiteService // pour activer/désactiver le site selon l'issue du paiement
+    private siteService: SiteService,
+    private sandboxPolicy: SandboxPolicy,
+    private sandboxProvider: SandboxPaymentProvider
   ) {}
 
   // =========================================================
@@ -76,7 +96,8 @@ export class PaymentService {
   async initiatePayment(
     clientId: string,
     clientPhone: string,
-    input: InitiatePaymentInput
+    input: InitiatePaymentInput,
+    operator?: MobileMoneyOperator
   ): Promise<{ paymentId: string; redirectUrl?: string }> {
     const site = await this.siteRepo.findById(input.siteId);
     if (!site) throw new NotFoundError("SITE");
@@ -86,7 +107,6 @@ export class PaymentService {
       throw new BusinessRuleError("SITE_NOT_PAYABLE_IN_CURRENT_STATUS");
     }
 
-    // Empêche un double paiement en cours : un paiement PENDING existe déjà pour ce site
     const latest = await this.paymentRepo.findLatestBySite(site.id);
     if (latest && latest.status === PaymentStatus.PENDING) {
       throw new BusinessRuleError("PAYMENT_ALREADY_IN_PROGRESS");
@@ -102,24 +122,49 @@ export class PaymentService {
       amount,
       currency: "XOF",
       method: input.method,
-      provider: "", // renseigné juste après par le provider résolu
+      provider: "", // renseigné par attachProviderRef après l'appel au provider
       providerTransactionRef: "",
       status: PaymentStatus.PENDING,
     });
 
-    const provider = this.providerResolver.resolve(input.method);
-    const { providerTransactionRef, redirectUrl } = await provider.initiateCharge({
-      amount,
-      reference: payment.id,
-      clientPhone: input.method === PaymentMethod.MOBILE_MONEY ? clientPhone : undefined,
-    });
+    const useSandbox = this.sandboxPolicy.appliesTo(clientId);
+    const provider: PaymentProvider = useSandbox
+      ? this.sandboxProvider
+      : this.providerResolver.resolve(input.method);
 
-    await this.paymentRepo.updateStatus(payment.id, PaymentStatus.PENDING);
-    // Note : providerTransactionRef doit être persisté ici aussi (update repo non détaillé
-    // pour rester lisible — dans la vraie implémentation, ajoute un champ à updateStatus
-    // ou une méthode dédiée attachProviderRef(paymentId, ref) sur PaymentRepository).
+    let charge: { providerTransactionRef: string; redirectUrl?: string };
+    try {
+      charge = await provider.initiateCharge({
+        amount,
+        reference: payment.id,
+        clientPhone: input.method === PaymentMethod.MOBILE_MONEY ? clientPhone : undefined,
+        operator: input.method === PaymentMethod.MOBILE_MONEY ? operator : undefined,
+      });
+    } catch (err) {
+      // sinon le paiement reste PENDING et bloque le client (PAYMENT_ALREADY_IN_PROGRESS)
+      await this.paymentRepo.updateStatus(payment.id, PaymentStatus.FAILED);
+      throw err;
+    }
 
-    return { paymentId: payment.id, redirectUrl };
+    await this.paymentRepo.attachProviderRef(payment.id, provider.name, charge.providerTransactionRef);
+
+    if (useSandbox) {
+      // simule le webhook de succès, sans passer par la route publique
+      await this.settle(
+        { ...payment, provider: provider.name, providerTransactionRef: charge.providerTransactionRef },
+        "SUCCESS",
+        amount
+      );
+      // Pas de page provider à visiter : on renvoie directement vers la page de retour,
+      // qui lira le statut SUCCESS déjà enregistré et redirigera vers le dashboard.
+      // (Sans redirectUrl, le formulaire de paiement affichait « pas de lien de paiement ».)
+      return {
+        paymentId: payment.id,
+        redirectUrl: `${process.env.APP_BASE_URL ?? ""}/dashboard/payments/${payment.id}/callback`,
+      };
+    }
+
+    return { paymentId: payment.id, redirectUrl: charge.redirectUrl };
   }
 
   // =========================================================
@@ -134,12 +179,24 @@ export class PaymentService {
     const payment = await this.paymentRepo.findByProviderRef(providerTransactionRef);
     if (!payment) throw new NotFoundError("PAYMENT");
 
+    // Un paiement sandbox ne se règle jamais via la route publique
+    if (payment.provider === SANDBOX_PROVIDER_NAME) {
+      throw new BusinessRuleError("SANDBOX_PAYMENT_NOT_SETTLEABLE_VIA_WEBHOOK");
+    }
+
+    await this.settle(payment, outcome, confirmedAmount);
+  }
+
+  private async settle(
+    payment: IPayment,
+    outcome: "SUCCESS" | "FAILED",
+    confirmedAmount: number
+  ): Promise<void> {
     // Idempotence : un webhook peut être renvoyé plusieurs fois par le provider
     if (payment.status === PaymentStatus.SUCCESS || payment.status === PaymentStatus.FAILED) {
       return;
     }
 
-    // Le montant confirmé par le provider doit correspondre exactement à ce qu'on a enregistré
     if (confirmedAmount !== payment.amount) {
       throw new BusinessRuleError("AMOUNT_MISMATCH_POSSIBLE_FRAUD");
     }
@@ -153,20 +210,57 @@ export class PaymentService {
     await this.siteService.activateAfterPayment(payment.siteId, payment.id);
   }
 
-  // ============ AJOUT dans payments/Payment.service.ts ============
-// À insérer dans la classe PaymentService, par exemple juste après initiatePayment().
-// Sert à la page de confirmation côté client : vérifier où en est un paiement,
-// avec contrôle d'ownership, sans exposer le repository brut aux routes API.
+  // =========================================================
+  // STATUT (page de confirmation côté client)
+  // =========================================================
 
   async getStatus(
     clientId: string,
     paymentId: string
   ): Promise<{ paymentId: string; siteId: string; status: PaymentStatus }> {
-    const payment = await this.paymentRepo.findById(paymentId);
+    let payment = await this.paymentRepo.findById(paymentId);
     if (!payment) throw new NotFoundError("PAYMENT");
     if (payment.clientId !== clientId) throw new OwnershipError();
 
+    // Encore PENDING : on demande son état réel au provider plutôt que d'attendre uniquement
+    // le webhook (qui ne peut pas joindre un poste local, et peut arriver en retard).
+    if (payment.status === PaymentStatus.PENDING) {
+      try {
+        await this.syncPayment(payment);
+        payment = (await this.paymentRepo.findById(paymentId)) ?? payment;
+      } catch (err) {
+        console.error("[payments] synchronisation provider impossible", err);
+      }
+    }
+
     return { paymentId: payment.id, siteId: payment.siteId, status: payment.status };
+  }
+
+  // =========================================================
+  // SYNCHRONISATION (webhook ou interrogation depuis la page de retour)
+  // =========================================================
+
+  // Point d'entrée du webhook : le contenu de la notification n'est jamais cru tel quel.
+  // On l'utilise uniquement pour retrouver la transaction, puis on relit son état et son
+  // montant auprès du provider avant de régler quoi que ce soit.
+  async syncByProviderRef(providerTransactionRef: string): Promise<void> {
+    const payment = await this.paymentRepo.findByProviderRef(providerTransactionRef);
+    if (!payment) throw new NotFoundError("PAYMENT");
+    await this.syncPayment(payment);
+  }
+
+  private async syncPayment(payment: IPayment): Promise<void> {
+    if (payment.status !== PaymentStatus.PENDING) return;
+    if (payment.provider === SANDBOX_PROVIDER_NAME) return; // réglé à la création
+    if (!payment.providerTransactionRef) return;
+
+    const provider = this.providerResolver.resolve(payment.method);
+    if (!provider.checkStatus) return;
+
+    const state = await provider.checkStatus(payment.providerTransactionRef);
+    if (state.outcome === "PENDING") return;
+
+    await this.settle(payment, state.outcome, state.amount);
   }
 
   // =========================================================
@@ -181,7 +275,11 @@ export class PaymentService {
       throw new BusinessRuleError("ONLY_SUCCESSFUL_PAYMENTS_CAN_BE_REFUNDED");
     }
 
-    const provider = this.providerResolver.resolve(payment.method);
+    const provider: PaymentProvider =
+      payment.provider === SANDBOX_PROVIDER_NAME
+        ? this.sandboxProvider
+        : this.providerResolver.resolve(payment.method);
+
     await provider.refund(payment.providerTransactionRef, payment.amount);
 
     await this.paymentRepo.updateStatus(payment.id, PaymentStatus.REFUNDED);

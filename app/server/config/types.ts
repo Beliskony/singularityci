@@ -48,7 +48,7 @@ export interface TemplatesTable {
   name: string;
   slug: string;
   description: string | null;
-  price: number;
+  price_xof: number;
   preview_images: ColumnType<string, string, string>;
   is_active: Generated<boolean>;
   created_at: Generated<Date>;

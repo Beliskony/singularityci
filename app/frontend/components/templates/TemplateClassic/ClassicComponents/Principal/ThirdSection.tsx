@@ -1,14 +1,17 @@
-// ============ TemplateClassic/components/ThirdSection.tsx ============
+// ============ TemplateClassic/ClassicComponents/principal/ThirdSection.tsx ============
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useInView } from "../../hooks/useInView";
+import type { ClassicImages, ClassicTexts } from "../../classicConfig";
 
 interface ThirdSectionProps {
   venueName?: string;
   venueImages: string[];
+  texts: ClassicTexts;
+  imgs: ClassicImages;
 }
 
-const ThirdSection = ({ venueName, venueImages }: ThirdSectionProps) => {
+const ThirdSection = ({ venueName, venueImages, texts, imgs }: ThirdSectionProps) => {
   const { ref, inView } = useInView<HTMLElement>(0.3);
   const [current, setCurrent] = useState(0);
   const [enableTransition, setEnableTransition] = useState(true);
@@ -61,17 +64,17 @@ const ThirdSection = ({ venueName, venueImages }: ThirdSectionProps) => {
   return (
     <section
       ref={ref}
-      className={`relative isolate w-full h-full bg-brand-sage overflow-hidden lg:flex lg:items-center lg:justify-center lg:py-10 ${
+      className={`relative isolate w-full h-full bg-(--c-thirdBg) overflow-hidden lg:flex lg:items-center lg:justify-center lg:py-10 ${
         inView ? "in-view" : ""
       }`}
     >
       <div
-        className="relative w-full min-h-screen bg-ivoire rounded-t-[160px] flex flex-col items-center mt-5 pt-5 pb-4
+        className="relative w-full min-h-screen bg-(--c-thirdCardBg) rounded-t-[160px] flex flex-col items-center mt-5 pt-5 pb-4
                    sm:max-w-md sm:mx-auto
                    lg:min-h-0 lg:max-w-sm lg:mt-0 lg:pt-8 lg:pb-5 lg:rounded-[160px] lg:shadow-2xl"
       >
         <div className="ts-item relative w-50 mt-2 lg:-mt-10">
-          <img src="/classiqueTemplate/Illustration2.png" alt="" className="w-full h-full object-cover" />
+          <img src={imgs.thirdImageUrl} alt="" className="w-full h-full object-cover" />
         </div>
 
         {venueImages.length > 0 && (
@@ -91,26 +94,26 @@ const ThirdSection = ({ venueName, venueImages }: ThirdSectionProps) => {
             </div>
 
             <button onClick={prev} aria-label="Image précédente" className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center">
-              <ChevronLeft className="w-6 h-6 text-white" />
+              <ChevronLeft className="w-6 h-6 text-(--c-thirdArrowColor)" />
             </button>
             <button onClick={next} aria-label="Image suivante" className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center">
-              <ChevronRight className="w-6 h-6 text-white" />
+              <ChevronRight className="w-6 h-6 text-(--c-thirdArrowColor)" />
             </button>
           </div>
         )}
 
         {venueName && (
           <div className="ts-item flex flex-col items-center mt-8 px-6 text-center">
-            <p className="italic text-(--text-on-light) font-script text-2xl sm:text-3xl leading-snug">{venueName}</p>
+            <p className="italic text-(--c-thirdVenueNameColor) font-script text-2xl sm:text-3xl leading-snug">{venueName}</p>
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
               target="_blank"
               rel="noopener noreferrer"
               className="ts-map-btn mt-6 inline-flex items-center px-9 py-3.5 rounded-full
-              bg-(--primary) text-ivoire text-sm sm:text-base font-medium tracking-widest uppercase
-              shadow-md shadow-(--primary)/30 ring-1 ring-ivoire/20 hover:shadow-lg hover:shadow-(--primary)/40"
+              bg-(--c-thirdButtonBg) text-(--c-thirdButtonTextColor) text-sm sm:text-base font-medium tracking-widest uppercase
+              shadow-md shadow-(--c-thirdButtonBg)/30 ring-1 ring-(--c-thirdButtonTextColor)/20 hover:shadow-lg hover:shadow-(--c-thirdButtonBg)/40"
             >
-              Itinéraire Google Maps
+              {texts.mapButtonLabel}
             </a>
           </div>
         )}

@@ -1,8 +1,9 @@
-// ============ TemplateClassic/index.tsx ============
+// ============ TemplateClassic/Index.tsx ============
 "use client";
 
 import "./classic-theme.css";
 import { TemplateRenderProps } from "../registry";
+import { resolveClassic } from "./ClassicConfig";
 import FirstSection from "../TemplateClassic/ClassicComponents/principal/FirstSection";
 import SecondSection from "../TemplateClassic/ClassicComponents/principal/SecondSection";
 import ThirdSection from "../TemplateClassic/ClassicComponents/principal/ThirdSection";
@@ -10,12 +11,6 @@ import FullSlideSection from "../TemplateClassic/ClassicComponents/principal/Ful
 import ProgramSection from "../TemplateClassic/ClassicComponents/principal/ProgramSection";
 import FormSection from "../TemplateClassic/ClassicComponents/principal/FormSection";
 import Footer from "../TemplateClassic/ClassicComponents/principal/Footer";
-
-// Terracotta — même valeur que --color-primary dans classic-theme.css, pour
-// que le rendu reste cohérent tant que le client n'a pas encore personnalisé
-// sa couleur (site DRAFT) ou n'a pas touché ce champ.
-const DEFAULT_PRIMARY = "#E35336";
-const DEFAULT_TEXT_COLOR = "#8B5E3C";
 
 export default function TemplateClassic({
   groomName,
@@ -31,22 +26,23 @@ export default function TemplateClassic({
   programItems,
   onSubmitRsvp,
 }: TemplateRenderProps) {
+  // Chaque couleur devient une variable CSS --c-<clé> lue par les sections (bg-(--c-…)),
+  // chaque texte / illustration arrive résolu (valeur client ou valeur d'origine).
+  const { cssVars, texts, imgs } = resolveClassic(themeColors, customTexts);
+
   return (
-    <div 
+    <div
       className="max-w-md mx-auto w-full overflow-x-hidden"
       data-font-style={styleOptions?.fontStyle ?? "script"}
-      style={{
-        "--primary": themeColors?.primary ?? DEFAULT_PRIMARY,
-        "--text-color": themeColors?.textColor ?? DEFAULT_TEXT_COLOR,
-      } as React.CSSProperties}
+      style={cssVars as React.CSSProperties}
     >
-      <FirstSection groomName={groomName} brideName={brideName} heroImage={heroImage} />
-      <SecondSection eventDate={eventDate} welcomeMessage={customTexts?.welcomeMessage} />
-      <ThirdSection venueName={venueName} venueImages={venueImages} />
+      <FirstSection groomName={groomName} brideName={brideName} heroImage={heroImage} imgs={imgs} />
+      <SecondSection eventDate={eventDate} texts={texts} imgs={imgs} />
+      <ThirdSection venueName={venueName || texts.venue || undefined} venueImages={venueImages} texts={texts} imgs={imgs} />
       <FullSlideSection images={galleryImages} />
-      <ProgramSection eventDate={eventDate} programItems={programItems ?? []} />
-      <FormSection rsvpDeadlineLabel={customTexts?.rsvpDeadline} onSubmitRsvp={onSubmitRsvp} />
-      <Footer groomName={groomName} brideName={brideName} eventDate={eventDate} />
+      <ProgramSection eventDate={eventDate} programItems={programItems ?? []} texts={texts} imgs={imgs} />
+      <FormSection texts={texts} imgs={imgs} onSubmitRsvp={onSubmitRsvp} />
+      <Footer groomName={groomName} brideName={brideName} eventDate={eventDate} texts={texts} />
     </div>
   );
 }

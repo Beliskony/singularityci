@@ -9,7 +9,7 @@ function mapRowToTemplate(row: any): ITemplate {
     name: row.name,
     slug: row.slug,
     description: row.description ?? undefined,
-    price: row.price_xof,
+    price_xof: Number(row.price_xof),
     previewImages: JSON.parse(row.preview_images ?? "[]"),
     isActive: !!row.is_active,
     createdAt: row.created_at,
@@ -28,7 +28,7 @@ export class TemplateRepositoryImpl {
         name: data.name!,
         slug: data.slug!,
         description: data.description ?? null,
-        price: data.price!,
+        price_xof: data.price_xof!,
         preview_images: JSON.stringify(data.previewImages ?? []),
         is_active: data.isActive ?? true,
       })
@@ -60,7 +60,7 @@ export class TemplateRepositoryImpl {
       .set({
         name: data.name,
         description: data.description,
-        price: data.price,
+        price_xof: data.price_xof,
         preview_images: data.previewImages ? JSON.stringify(data.previewImages) : undefined,
       })
       .where("id", "=", id)
@@ -89,6 +89,6 @@ export class TemplateRepositoryImpl {
   async getPrice(templateId: string): Promise<number | null> {
     const template = await this.findById(templateId);
     if (!template || !template.isActive) return null;
-    return template.price;
+    return template.price_xof;
   }
 }
