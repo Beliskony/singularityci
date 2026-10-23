@@ -1,7 +1,7 @@
-// ============ app/api/client/sites/[siteId]/uploads/route.ts ============
+// ============ app/api/client/sites/[siteId]/images/uploads/route.ts ============
 // POST multipart/form-data { file } → { url: "/api/images/<uuid>" }
 // Stocke l'image dans la base. Le fichier n'est rattaché à rien tant qu'on ne l'a pas utilisé :
-// soit comme photo (POST …/images), soit comme illustration (enregistrée dans customTexts).
+// soit comme photo (POST …/images, route voisine), soit comme illustration (enregistrée dans customTexts).
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { getSiteService } from "@/app/server/sites/site.container";

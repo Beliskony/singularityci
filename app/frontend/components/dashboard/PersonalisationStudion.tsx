@@ -207,7 +207,7 @@ export function PersonnalisationStudio({ site, images, fieldSchema, templateSlug
     const small = await compressImage(file);
     const fd = new FormData();
     fd.append("file", small);
-    const res = await fetch(`/api/client/sites/${site.id}/uploads`, { method: "POST", body: fd, credentials: "include" });
+    const res = await fetch(`/api/client/sites/${site.id}/images/uploads`, { method: "POST", body: fd, credentials: "include" });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error ?? "UPLOAD_FAILED");
     return data.url as string;
@@ -247,7 +247,7 @@ export function PersonnalisationStudio({ site, images, fieldSchema, templateSlug
     setPhotoBusy(true);
     setPhotoError(null);
     try {
-      const res = await fetch(`/api/client/sites/${site.id}/images?imageId=${imageId}`, {
+      const res = await fetch(`/api/client/sites/${site.id}/images/${imageId}`, {
         method: "DELETE",
         credentials: "include",
       });
