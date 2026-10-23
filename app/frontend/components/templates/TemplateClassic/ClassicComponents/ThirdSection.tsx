@@ -1,8 +1,8 @@
 // ============ TemplateClassic/ClassicComponents/principal/ThirdSection.tsx ============
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useInView } from "../../hooks/useInView";
-import type { ClassicImages, ClassicTexts } from "../../classicConfig";
+import { useInView } from "../hooks/useInView";
+import type { ClassicImages, ClassicTexts } from "../classicConfig";
 
 interface ThirdSectionProps {
   venueName?: string;

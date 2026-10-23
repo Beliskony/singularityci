@@ -1,6 +1,6 @@
 // ============ TemplateClassic/ClassicComponents/principal/SecondSection.tsx ============
-import { useInView } from "../../hooks/useInView";
-import type { ClassicImages, ClassicTexts } from "../../classicConfig";
+import { useInView } from "../hooks/useInView";
+import type { ClassicImages, ClassicTexts } from "../classicConfig";
 
 interface SecondSectionProps {
   eventDate: Date;

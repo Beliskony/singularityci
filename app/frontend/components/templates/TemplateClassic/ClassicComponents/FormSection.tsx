@@ -1,8 +1,8 @@
 // ============ TemplateClassic/ClassicComponents/principal/FormSection.tsx ============
 import { useState } from "react";
-import { useInView } from "../../hooks/useInView";
-import type { RsvpFormData } from "../../../registry";
-import type { ClassicImages, ClassicTexts } from "../../classicConfig";
+import { useInView } from "../hooks/useInView";
+import type { RsvpFormData } from "../../registry";
+import type { ClassicImages, ClassicTexts } from "../classicConfig";
 
 type Attendance = "ATTENDING" | "PENDING" | null;
 

@@ -1,5 +1,5 @@
 // ============ TemplateClassic/ClassicComponents/principal/FirstSection.tsx ============
-import type { ClassicImages } from "../../classicConfig";
+import type { ClassicImages } from "../classicConfig";
 
 interface FirstSectionProps {
   groomName: string;

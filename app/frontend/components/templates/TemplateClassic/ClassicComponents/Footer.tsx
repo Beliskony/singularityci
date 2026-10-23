@@ -1,6 +1,6 @@
 // ============ TemplateClassic/ClassicComponents/principal/Footer.tsx ============
-import { useInView } from "../../hooks/useInView";
-import type { ClassicTexts } from "../../classicConfig";
+import { useInView } from "../hooks/useInView";
+import type { ClassicTexts } from "../classicConfig";
 
 interface FooterProps {
   groomName: string;
