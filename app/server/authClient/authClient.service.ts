@@ -105,7 +105,7 @@ export class AuthClientService {
 
   async register(input: RegisterClientInput): Promise<{ clientId: string }> {
      // Honeypot : un humain ne voit jamais ce champ, un bot qui remplit tout le formulaire si.
-    // Vérifié en tout premier, avant même d'appeler Google — inutile de payer le coût
+    // Vérifié en tout premier, avant même d'appeler Google - inutile de payer le coût
     // d'un appel réseau à reCAPTCHA si le honeypot suffit déjà à disqualifier.
     if (input.website) {
       throw new BusinessRuleError("REGISTRATION_REJECTED");
@@ -134,7 +134,7 @@ export class AuthClientService {
     });
 
     // input.phone est garanti (champ requis du schéma), contrairement à client.phone
-    // qui reste typé optionnel côté IClient — donc on repart de la valeur d'entrée.
+    // qui reste typé optionnel côté IClient - donc on repart de la valeur d'entrée.
     await this.sendOtp(client.id, input.phone, "REGISTER");
     return { clientId: client.id };
   }

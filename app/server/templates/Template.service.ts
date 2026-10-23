@@ -98,7 +98,7 @@ export class TemplateService {
     const template = await this.templateRepo.findById(templateId);
     if (!template) throw new NotFoundError("TEMPLATE");
 
-    // Désactiver retire juste du catalogue — les sites déjà achetés sur ce template
+    // Désactiver retire juste du catalogue - les sites déjà achetés sur ce template
     // continuent de fonctionner normalement (Site.service ne vérifie isActiveTemplate
     // qu'à la création, pas à chaque lecture)
     await this.templateRepo.setActive(templateId, false);

@@ -14,7 +14,7 @@ const testimonials = [
   },
   {
     quote:
-      "Le paiement en mobile money a tout simplifié. Pas de carte, pas de complications — en dix minutes c'était réglé.",
+      "Le paiement en mobile money a tout simplifié. Pas de carte, pas de complications - en dix minutes c'était réglé.",
     name: "Cynthia & Junior",
     detail: "Mariage prévu à Grand-Bassam, Août 2026",
   },

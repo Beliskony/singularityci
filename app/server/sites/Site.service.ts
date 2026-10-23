@@ -239,7 +239,7 @@ async getSiteForEditing(
   async findPublicSiteBySubdomain(subdomain: string): Promise<IPublicSite | null> {
   const site = await this.siteRepo.findBySubdomain(subdomain.toLowerCase());
 
-  // Un site DRAFT, PENDING_PAYMENT, EXPIRED ou ARCHIVED n'est jamais visible publiquement —
+  // Un site DRAFT, PENDING_PAYMENT, EXPIRED ou ARCHIVED n'est jamais visible publiquement -
   // seul un mariage ACTIVE (payé, dans sa fenêtre de validité) doit apparaître
   if (!site || site.status !== SiteStatus.ACTIVE) return null;
 

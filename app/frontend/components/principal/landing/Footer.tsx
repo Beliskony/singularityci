@@ -68,7 +68,7 @@ export function Footer() {
 
       <div className="border-t border-border">
         <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-sm text-foreground/50">
-          <p>© 2026 Singularity.ci — Grand-Bassam, Côte d'Ivoire</p>
+          <p>© 2026 Singularity.ci Grand-Bassam, Côte d'Ivoire</p>
           <p>Fait avec soin pour vos plus beaux jours</p>
         </div>
       </div>

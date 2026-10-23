@@ -67,7 +67,7 @@ export default function TemplateFloral({
   const textOnDark = themeColors?.textOnDark ?? DEFAULT_TEXT_ON_DARK;
 
   // Pattern "remplacement d'état" (pas de position:fixed) : un overlay fixed
-  // casse quand un ancêtre (le cadre de /apercu) a un transform CSS — déjà
+  // casse quand un ancêtre (le cadre de /apercu) a un transform CSS - déjà
   // rencontré sur Éclat. On bascule donc tout le contenu plutôt que de
   // superposer un calque.
   const [entered, setEntered] = useState(false);

@@ -10,7 +10,7 @@ export default async function TemplatePreviewPage({
 }) {
   const { slug } = await params;
 
-  // Valide tôt côté serveur que le slug existe dans le registry — si ce
+  // Valide tôt côté serveur que le slug existe dans le registry - si ce
   // n'est pas le cas, 404 immédiate sans même descendre au client.
   try {
     getTemplateComponent(slug);
@@ -18,7 +18,7 @@ export default async function TemplatePreviewPage({
     notFound();
   }
 
-  // On ne passe que le slug (une string, sérialisable) au client — jamais
+  // On ne passe que le slug (une string, sérialisable) au client - jamais
   // le composant ni les handlers, qui doivent vivre côté client.
   return <TemplatePreviewClient slug={slug} />;
 }

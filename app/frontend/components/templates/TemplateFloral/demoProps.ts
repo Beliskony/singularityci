@@ -1,4 +1,4 @@
-// Données de démonstration pour /apercu/floral — même convention que
+// Données de démonstration pour /apercu/floral - même convention que
 // TemplateClassic/demoProps.ts et TemplateEclat/demoProps.ts.
 
 export const floralDemoProps = {
@@ -17,7 +17,7 @@ export const floralDemoProps = {
   ],
   venueName: "Domaine des Palmiers, Abidjan",
   themeColors: {
-    // Les 3 clés de base — fallback automatique du template si absentes.
+    // Les 3 clés de base - fallback automatique du template si absentes.
     primary: "#c9a24a",
     textOnLight: "#4a0e1a",
     textOnDark: "#f4ead9",
@@ -32,7 +32,7 @@ export const floralDemoProps = {
     venueText: "Le lieu où nous célébrerons notre union, entourés de ceux qui comptent.",
     rsvpTitle: "Confirmez votre présence",
     // Chaque section retombe sur /floralTemplate/bouquet-default.png si ces
-    // clés sont absentes — on les précise ici juste pour l'aperçu démo,
+    // clés sont absentes - on les précise ici juste pour l'aperçu démo,
     // mais ce ne sont pas obligatoires pour qu'un vrai site s'affiche.
     heroBouquetUrl: "/floralTemplate/bouquet-default.png",
     programBouquetUrl: "/floralTemplate/bouquet-default.png",

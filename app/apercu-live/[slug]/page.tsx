@@ -3,7 +3,7 @@
 // template et se met à jour à chaque message `preview-props` du parent.
 // Pourquoi une iframe : les media queries Tailwind (md:, lg:) du template se
 // calculent sur la largeur de l'iframe (≈ 390 px = téléphone), pas sur celle du
-// dashboard — c'est la seule façon d'avoir un aperçu mobile fidèle.
+// dashboard - c'est la seule façon d'avoir un aperçu mobile fidèle.
 "use client";
 
 import { use, useEffect, useMemo, useState } from "react";

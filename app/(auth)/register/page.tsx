@@ -43,7 +43,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("+225");
   const [password, setPassword] = useState("");
-  const [website, setWebsite] = useState(""); // honeypot — jamais rempli par un humain
+  const [website, setWebsite] = useState(""); // honeypot - jamais rempli par un humain
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 

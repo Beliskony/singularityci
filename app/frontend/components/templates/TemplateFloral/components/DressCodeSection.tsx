@@ -51,7 +51,7 @@ export default function DressCodeSection({ customTexts = {}, themeColors = {} }:
         </div>
 
         <p className="mt-6 text-[11px] italic opacity-60" style={{ color: textColor }}>
-          Palette indicative — à adapter selon vos envies.
+          Palette indicative - à adapter selon vos envies.
         </p>
       </div>
     </section>

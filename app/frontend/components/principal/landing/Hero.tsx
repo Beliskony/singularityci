@@ -5,7 +5,7 @@ import Link from "next/link";
 export function Hero() {
   return (
     <section className="relative min-h-[92vh] flex items-end overflow-hidden">
-      {/* Photo de fond — remplace par une vraie image dans /public/landing/hero-couple.jpg */}
+      {/* Photo de fond - remplace par une vraie image dans /public/landing/hero-couple.jpg */}
       <Image
         src="/landing/hero-couple.jpg"
         alt="Couple le jour de leur mariage"
@@ -28,7 +28,7 @@ export function Hero() {
           </h1>
 
           <p className="mt-6 text-lg text-white/80 max-w-md">
-            Un site personnalisé avec vos noms, vos photos et votre date — vos invités
+            Un site personnalisé avec vos noms, vos photos et votre date, vos invités
             confirment leur présence en un clic, où qu'ils soient.
           </p>
 

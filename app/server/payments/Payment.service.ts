@@ -31,7 +31,7 @@ interface TemplateRepository {
 export type MobileMoneyOperator = "MTN" | "ORANGE" | "WAVE" | "MOOV";
 export const MOBILE_MONEY_OPERATORS: readonly MobileMoneyOperator[] = ["MTN", "ORANGE", "WAVE", "MOOV"];
 
-// Contrat commun à toutes les implémentations — chacune vit dans payments/providers/
+// Contrat commun à toutes les implémentations - chacune vit dans payments/providers/
 export interface PaymentProvider {
   readonly name: string;
   initiateCharge(params: {

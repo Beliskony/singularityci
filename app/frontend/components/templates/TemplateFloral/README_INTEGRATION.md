@@ -21,7 +21,7 @@ export const TEMPLATE_REGISTRY: Record<string, { component, cover, demoProps }> 
 ```sql
 CALL sp_template_create('floral', 'Floral', 'Un faire-part bordeaux et or, romantique et élégant.', 16000, 1);
 ```
-(Adapter le prix XOF à ta grille tarifaire — Classic=15000, Éclat=18000.)
+(Adapter le prix XOF à ta grille tarifaire - Classic=15000, Éclat=18000.)
 
 4. Le `TemplateFieldSchema` de Floral (pour le formulaire de personnalisation côté dashboard) :
 
@@ -38,7 +38,7 @@ CALL sp_template_create('floral', 'Floral', 'Un faire-part bordeaux et or, roman
   plus les 3 clés de base `primary`, `textOnLight`, `textOnDark`).
 - `textFields`: `welcomeTitle`, `welcomeText`, `dressCodeTitle`, `dressCodeText`, `venueText`, `rsvpTitle`.
 - `maxImagesByRole`: `{ HERO: 0, GALLERY: 4, VENUE: 1 }` (Floral n'utilise pas d'image HERO dédiée,
-  le hero est purement graphique/sceau de cire — à ajuster si tu veux y ajouter une photo plus tard).
+  le hero est purement graphique/sceau de cire - à ajuster si tu veux y ajouter une photo plus tard).
 - `maxProgramItems`: 6 (au-delà la timeline devient trop longue visuellement).
 
 ## Notes de conception
@@ -46,13 +46,13 @@ CALL sp_template_create('floral', 'Floral', 'Un faire-part bordeaux et or, roman
 - Palette fidèle à la référence : bordeaux profond (#4a0e1a / #330a12), vin (#6e1b2b),
   or (#c9a24a / #d8bd80), crème (#f4ead9 / #efe0c8).
 - Typographie : **Cormorant Garamond** (serif élégant, corps de texte) + **Tangerine**
-  (script, réservée aux prénoms et aux titres de section — "belle typographie" demandée).
+  (script, réservée aux prénoms et aux titres de section - "belle typographie" demandée).
 - Section "dress code" = mockup visuel (palette de couleurs indicative), comme Registry/Fund
-  sur Éclat — pas de nouvelle colonne DB nécessaire.
+  sur Éclat - pas de nouvelle colonne DB nécessaire.
 - Le formulaire RSVP garde `status: "ATTENDING" | "NOT_ATTENDING"` (cohérent avec
   `002_rsvp_site_fixes.sql`). Les préférences de boissons (checkboxes) sont une amélioration
   purement visuelle : elles sont repliées dans le champ `message` existant plutôt que d'ajouter
-  une colonne — à toi de confirmer si `RsvpFormData`/`sp_rsvp_create` acceptent bien un `message`
+  une colonne - à toi de confirmer si `RsvpFormData`/`sp_rsvp_create` acceptent bien un `message`
   optionnel côté backend réel (comme pour Éclat, ce point n'a pas été re-vérifié sur le fichier
   de types RSVP définitif).
 - Pas de `fixed`/intro-gate façon Éclat ici : le Hero est en haut de page normale (comme Classic),

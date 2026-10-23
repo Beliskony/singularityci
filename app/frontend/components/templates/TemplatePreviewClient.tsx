@@ -30,7 +30,7 @@ const TemplatePreviewClient = ({ slug }: TemplatePreviewClientProps) => {
   return (
     <div className="relative">
       <div className="sticky top-0 z-50 w-full bg-black text-white text-center text-sm py-2">
-        Aperçu — ceci n'est pas un site publié
+        Aperçu - ceci n'est pas un site publié
       </div>
       <TemplateComponent {...fullDemoProps} />
     </div>

@@ -54,7 +54,7 @@ export class SandboxPolicy {
     const scope = ids.length > 0 ? new Set(ids) : null;
 
     console.warn(
-      `[payments] MODE SANDBOX ACTIF — ${scope ? `${scope.size} compte(s) concerné(s)` : "TOUS les clients"} : aucun débit réel`
+      `[payments] MODE SANDBOX ACTIF - ${scope ? `${scope.size} compte(s) concerné(s)` : "TOUS les clients"} : aucun débit réel`
     );
     return new SandboxPolicy(true, scope);
   }

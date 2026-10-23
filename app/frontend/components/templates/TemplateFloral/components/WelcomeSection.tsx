@@ -12,7 +12,7 @@ export default function WelcomeSection({ customTexts = {}, themeColors = {} }: P
 
   // Fond bordeaux (pas crème) : dans le faire-part de référence, le bloc
   // "chers invités" est une carte sombre encadrée d'or, pas une section
-  // claire — c'est ce genre de détail qui donnait au rendu un air trop
+  // claire - c'est ce genre de détail qui donnait au rendu un air trop
   // générique / interchangeable avec les autres templates.
   const bg = themeColors.welcomeBg ?? "#330a12";
   const titleColor = themeColors.welcomeTitleColor ?? "#d8bd80";

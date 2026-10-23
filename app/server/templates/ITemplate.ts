@@ -3,7 +3,7 @@
 export interface ITemplate {
   id: string;
   name: string;        // ex: "Classic", "Floral"
-  slug: string;         // ex: "classic", "floral" — correspond au dossier frontend/components/templates/Template<X>
+  slug: string;         // ex: "classic", "floral" - correspond au dossier frontend/components/templates/Template<X>
   description?: string;
   price_xof: number;        // en XOF
   previewImages: string[];

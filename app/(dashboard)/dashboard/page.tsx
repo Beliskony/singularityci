@@ -166,7 +166,7 @@ function SiteCard({ site, summary }: { site: ISite; summary: ISiteRsvpSummary | 
 function Stat({ label, value }: { label: string; value: number | undefined }) {
   return (
     <div>
-      <p className="text-xl font-semibold text-foreground">{value ?? "—"}</p>
+      <p className="text-xl font-semibold text-foreground">{value ?? "-"}</p>
       <p className="text-xs text-foreground/50">{label}</p>
     </div>
   );

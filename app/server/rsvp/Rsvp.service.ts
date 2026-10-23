@@ -41,7 +41,7 @@ export class RsvpService {
   ) {}
 
   // =========================================================
-  // SOUMISSION (publique, pas d'auth — n'importe quel invité avec le lien)
+  // SOUMISSION (publique, pas d'auth - n'importe quel invité avec le lien)
   // =========================================================
 
   async submitRsvp(input: SubmitRsvpInput): Promise<IRsvp> {

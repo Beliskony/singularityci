@@ -3,7 +3,7 @@
 import { useInView } from "../hooks/useInView";
 import RibbonDrape from "./RibbonDrape";
 
-// Image servie depuis /public — référencée par chemin, pas importée.
+// Image servie depuis /public - référencée par chemin, pas importée.
 const DEFAULT_BOUQUET = "/floralTemplate/bouquet-default.png";
 
 interface ProgramItem {

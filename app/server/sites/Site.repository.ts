@@ -6,7 +6,7 @@ import { ISite, ISiteImage, SiteStatus, SiteImageRole } from "./ISite";
 // mysql2 renvoie le résultat d'un CALL comme [ [rows...], OkPacket ] plutôt que
 // comme un tableau de lignes plat (le cas pour un SELECT classique via Kysely).
 // Ce helper centralise le dépouillement pour que tous les repositories basés
-// sur des procédures stockées restent cohérents — si ta version de Connection.ts
+// sur des procédures stockées restent cohérents - si ta version de Connection.ts
 // enveloppe le driver différemment, c'est ici qu'il faut ajuster.
 function firstResultSet<T>(raw: { rows: unknown }): T[] {
   const rows = raw.rows as any;

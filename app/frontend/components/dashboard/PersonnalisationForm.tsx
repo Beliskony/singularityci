@@ -7,7 +7,7 @@ import { ISite, ISiteImage, SiteStatus, SiteImageRole, IProgramItem } from "@/ap
 import { TemplateFieldSchema } from "@/app/frontend/types/TemplateFielSchemas";
 
 // ⚠️ Vérifie que TemplateFielSchemas.ts est bien placé à ce chemin exact
-// (celui que Site.service.ts importe déjà) — sinon ajuste l'import ici
+// (celui que Site.service.ts importe déjà) - sinon ajuste l'import ici
 // et dans Site.service.ts pour qu'ils pointent vers le même fichier.
 
 interface Props {
@@ -79,7 +79,7 @@ export function PersonnalisationForm({ site, images, fieldSchema }: Props) {
       customTexts,
       programItems,
     };
-    // eventDate n'est envoyé que si encore modifiable — Site.service.ts
+    // eventDate n'est envoyé que si encore modifiable - Site.service.ts
     // renvoie 409 (CANNOT_CHANGE_EVENT_DATE_AFTER_PAYMENT) sinon.
     if (!eventDateLocked) {
       payload.eventDate = eventDate;
@@ -163,7 +163,7 @@ export function PersonnalisationForm({ site, images, fieldSchema }: Props) {
             />
             {eventDateLocked && (
               <span className="mt-1 block text-xs text-foreground/50">
-                Cette date correspond à la fin de ton abonnement — elle ne peut plus être changée une
+                Cette date correspond à la fin de ton abonnement - elle ne peut plus être changée une
                 fois le site payé.
               </span>
             )}

@@ -20,7 +20,7 @@ export const eclatDemoProps: TemplateDemoProps = {
     welcomeEyebrow: "Un nouveau départ",
     welcomeTitle: "Bienvenue dans notre histoire",
     welcomeMessage:
-      "Nous avons choisi de nous dire oui entourés de ceux qui comptent le plus. Votre présence est le plus beau des cadeaux — venez célébrer avec nous.",
+      "Nous avons choisi de nous dire oui entourés de ceux qui comptent le plus. Votre présence est le plus beau des cadeaux - venez célébrer avec nous.",
     quote: "Deux chemins qui se rencontrent, un seul qui continue.",
     storyEyebrow: "Comment tout a commencé",
     storyTitle: "Le chapitre doré",

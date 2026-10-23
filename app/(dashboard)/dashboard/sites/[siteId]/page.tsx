@@ -12,7 +12,7 @@ import { CopyLinkButton } from "@/app/frontend/components/dashboard/CopyLinkButt
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 function fmt(date?: Date | string): string {
-  if (!date) return "—";
+  if (!date) return "-";
   return new Date(date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 }
 
@@ -73,7 +73,7 @@ export default async function SiteOverviewPage({ params }: { params: Promise<{ s
             <div className="flex items-center justify-between">
               <h2 className="font-display italic text-xl text-foreground">Réponses des invités</h2>
               <Link href={`/dashboard/sites/${site.id}/invites`} className="text-sm text-gold hover:underline">
-                Voir le détail →
+                Voir le détail
               </Link>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-3 text-center">
@@ -154,7 +154,7 @@ function NextStep({ status, siteId }: { status: SiteStatus; siteId: string }) {
 function Big({ label, value }: { label: string; value: number | undefined }) {
   return (
     <div className="rounded-xl bg-foreground/5 py-4">
-      <p className="text-3xl font-semibold text-foreground">{value ?? "—"}</p>
+      <p className="text-3xl font-semibold text-foreground">{value ?? "-"}</p>
       <p className="mt-1 text-xs text-foreground/50">{label}</p>
     </div>
   );

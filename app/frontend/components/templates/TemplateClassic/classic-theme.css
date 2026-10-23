@@ -7,10 +7,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #E35336;   /* Terracotta — valeur de repli si le client n'a pas encore choisi sa couleur */
+  --color-primary: #E35336;   /* Terracotta - valeur de repli si le client n'a pas encore choisi sa couleur */
   --color-vert: #5C6E4F;      /* Vert de gris */
   --color-brand-sage: #5C6E4F; /* Alias de `vert` : FirstSection/Footer/SecondSection/ThirdSection
-                                   utilisent `brand-sage`, FormSection/ProgramSection utilisent `vert` —
+                                   utilisent `brand-sage`, FormSection/ProgramSection utilisent `vert` -
                                    même couleur, deux noms déjà présents dans le code existant. */
   --color-ivoire: #FBF3E7;     /* Ivoire (dérivé de blanc) */
   --color-brunCacao: #3B2A20;  /* Brun cacao */

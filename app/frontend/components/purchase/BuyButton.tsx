@@ -1,7 +1,7 @@
 // ============ app/frontend/components/purchase/BuyButton.tsx ============
 // Bouton « Acheter » à placer sur chaque carte de template (section Modèles,
 // Tarifs, page /apercu/[slug]). Il mène à /payments/checkout/[slug], qui gère lui-même
-// la connexion si besoin — le bouton n'a donc pas à savoir si on est connecté.
+// la connexion si besoin - le bouton n'a donc pas à savoir si on est connecté.
 import Link from "next/link";
 
 interface Props {

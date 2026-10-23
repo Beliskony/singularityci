@@ -2,7 +2,7 @@
 const features = [
   { title: "Sous-domaine à vos noms", description: "vosnoms.singularity.ci, prêt à partager." },
   { title: "Compte à rebours en direct", description: "Le décompte jusqu'au grand jour, mis à jour en continu." },
-  { title: "Réponses RSVP", description: "Présents, absents, incertains — suivez tout depuis votre tableau de bord." },
+  { title: "Réponses RSVP", description: "Présents, absents, incertains - suivez tout depuis votre tableau de bord." },
   { title: "Mobile money & carte", description: "Paiement sécurisé, adapté à vos habitudes." },
 ];
 

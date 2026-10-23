@@ -127,7 +127,7 @@ export class ClientRepositoryImpl {
   }
 
   async updateLastLogin(id: string): Promise<void> {
-    // Pas de colonne last_login_at sur clients — no-op pour l'instant.
+    // Pas de colonne last_login_at sur clients - no-op pour l'instant.
   }
 
   async incrementFailedAttempts(id: string): Promise<number> {

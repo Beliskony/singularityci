@@ -13,7 +13,7 @@ const faqs = [
   {
     question: "Puis-je changer la date après avoir payé ?",
     answer:
-      "La date est verrouillée après paiement, car elle détermine la durée de validité de votre site. En cas de report, contactez-nous — nous traitons ces cas au cas par cas.",
+      "La date est verrouillée après paiement, car elle détermine la durée de validité de votre site. En cas de report, contactez-nous - nous traitons ces cas au cas par cas.",
   },
   {
     question: "Le mobile money est-il vraiment sécurisé ?",

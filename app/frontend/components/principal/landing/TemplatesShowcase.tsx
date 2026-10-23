@@ -30,7 +30,7 @@ export async function TemplatesShowcase() {
           Chaque design est un vrai site, pas une maquette
         </h2>
         <p className="mt-4 text-foreground/70">
-          Ouvrez l'aperçu complet, interagissez avec — c'est exactement ce que verront vos invités.
+          Ouvrez l'aperçu complet, interagissez avec, c'est exactement ce que verront vos invités.
         </p>
       </div>
 
@@ -100,7 +100,7 @@ export async function TemplatesShowcase() {
 
         {templates.length === 0 && (
           <div className="col-span-full text-center py-12 text-foreground/50 text-sm">
-            Aucun modèle publié pour l'instant — ajoute une ligne dans la table <code>templates</code>.
+            Aucun modèle publié pour l'instant - ajoute une ligne dans la table <code>templates</code>.
           </div>
         )}
 
@@ -111,7 +111,7 @@ export async function TemplatesShowcase() {
             </div>
             <div className="p-5">
               <p className="font-medium text-foreground/50">{t.name}</p>
-              <p className="text-sm text-foreground/40 mt-0.5">{t.tagline} — Bientôt disponible</p>
+              <p className="text-sm text-foreground/40 mt-0.5">{t.tagline} - Bientôt disponible</p>
             </div>
           </div>
         ))}

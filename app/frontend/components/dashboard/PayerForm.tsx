@@ -36,7 +36,7 @@ export function PayerForm({ siteId }: { siteId: string }) {
 
     setLoading(true);
     // Reste vrai tant qu'on quitte la page : le bouton garde alors « Redirection… ».
-    // Dans tous les autres cas (erreur, réponse inattendue) il doit être réactivé —
+    // Dans tous les autres cas (erreur, réponse inattendue) il doit être réactivé -
     // avant, les `return` dans le try sautaient setLoading(false) et le bouton restait bloqué.
     let leaving = false;
 

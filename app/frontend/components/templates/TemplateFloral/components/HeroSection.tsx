@@ -3,7 +3,7 @@
 import RibbonDrape from "./RibbonDrape";
 
 // L'image vit dans /public, donc on la référence par chemin (string), pas
-// par import JS — un fichier de /public n'est pas un module, l'import
+// par import JS - un fichier de /public n'est pas un module, l'import
 // plantait avec "Module not found". Place le fichier à
 // public/floralTemplate/bouquet-default.png (même convention que
 // public/classiqueTemplate/...).
@@ -26,7 +26,7 @@ const MONTHS_FR = [
 /**
  * Bandeau d'ouverture, affiché juste après l'IntroScreen (qui porte déjà
  * le sceau + les prénoms + la date). Pour éviter de répéter la même
- * composition, ce bloc met en avant le bouquet floral — l'élément qui
+ * composition, ce bloc met en avant le bouquet floral - l'élément qui
  * donne au template son identité "Floral" distincte des autres templates.
  */
 export default function HeroSection({ groomName, brideName, eventDate, venueName, themeColors = {}, customTexts = {} }: Props) {

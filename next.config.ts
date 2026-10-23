@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
 
-const ADMIN_ORIGIN = process.env.ADMIN_ORIGIN ? "http://localhost:3000" : 'https://admin.singularityci.com';
+const ADMIN_ORIGIN = process.env.ADMIN_ORIGIN ? "http://localhost:3000" : '*.trycloudflare.com';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  allowedDevOrigins: ["*.trycloudflare.com"], 
+
   async headers() {
     return [
       {

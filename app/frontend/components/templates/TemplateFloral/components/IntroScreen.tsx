@@ -15,7 +15,7 @@ const MONTHS_FR = [
 ];
 
 /**
- * Écran d'accueil "enveloppe cachetée" — reprend l'esprit du faire-part de
+ * Écran d'accueil "enveloppe cachetée" - reprend l'esprit du faire-part de
  * référence (fond bordeaux profond, sceau de cire doré, bouquet floral,
  * carte crème). Couleurs écrites en dur (pas de var(--color-*)) pour ne
  * jamais dépendre du chargement de floral-theme.css : l'écran d'entrée

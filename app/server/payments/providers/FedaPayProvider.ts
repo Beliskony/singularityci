@@ -45,7 +45,7 @@ export class FedaPayProvider implements PaymentProvider {
       : undefined;
 
     const transaction = await Transaction.create({
-      description: `Achat template — réf ${params.reference}`,
+      description: `Achat template - réf ${params.reference}`,
       amount: params.amount,
       currency: { iso: "XOF" },
       callback_url: `${process.env.APP_BASE_URL}/dashboard/payments/${params.reference}/callback`,
@@ -89,9 +89,9 @@ export class FedaPayProvider implements PaymentProvider {
   }
 
   async refund(_providerTransactionRef: string, _amount: number): Promise<void> {
-    // TODO — endpoint de remboursement FedaPay à confirmer avant mise en prod
+    // TODO - endpoint de remboursement FedaPay à confirmer avant mise en prod
     throw new Error(
-      "FedaPayProvider.refund() non implémenté — endpoint à confirmer avec FedaPay avant mise en prod"
+      "FedaPayProvider.refund() non implémenté - endpoint à confirmer avec FedaPay avant mise en prod"
     );
   }
 }

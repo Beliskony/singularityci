@@ -1,7 +1,7 @@
 // ============ frontend/components/landing/HowItWorks.tsx ============
 const steps = [
   { number: "1", title: "Choisissez votre modèle", description: "Parcourez nos designs et sélectionnez celui qui vous ressemble." },
-  { number: "2", title: "Personnalisez chaque détail", description: "Vos noms, vos photos, votre date, vos couleurs, votre lieu — tout est modifiable." },
+  { number: "2", title: "Personnalisez chaque détail", description: "Vos noms, vos photos, votre date, vos couleurs, votre lieu, tout est modifiable." },
   { number: "3", title: "Payez et partagez", description: "Mobile money ou carte. Votre lien est prêt à envoyer dans la minute." },
 ];
 

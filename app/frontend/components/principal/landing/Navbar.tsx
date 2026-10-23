@@ -161,11 +161,11 @@ export function Navbar() {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-40">
-      {/* Se replie au scroll — plus de bandeau qui mange l'espace une fois qu'on est dans le contenu */}
+      {/* Se replie au scroll plus de bandeau qui mange l'espace une fois qu'on est dans le contenu */}
       <div className={`overflow-hidden transition-all duration-300 ${scrolled ? "max-h-0" : "max-h-10"}`}>
         <div className="bg-black text-white text-center text-sm py-2 px-6">
           <span className="sm:hidden">-20% sur Classic ce mois-ci</span>
-          <span className="hidden sm:inline">Offre de lancement — 20% de réduction sur le modèle Classic ce mois-ci</span>
+          <span className="hidden sm:inline">Offre de lancement -20% de réduction sur le modèle Classic ce mois-ci</span>
         </div>
       </div>
 

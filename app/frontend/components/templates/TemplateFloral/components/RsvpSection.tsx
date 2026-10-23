@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useInView } from "../hooks/useInView";
 
-// Image servie depuis /public — référencée par chemin, pas importée.
+// Image servie depuis /public - référencée par chemin, pas importée.
 const DEFAULT_BOUQUET = "/floralTemplate/bouquet-default.png";
 
 interface RsvpFormData {

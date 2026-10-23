@@ -37,7 +37,7 @@ function getCountdown(target: Date) {
 
 export default function CalendarCountdownSection({ eventDate, themeColors = {} }: Props) {
   const { ref, isInView } = useInView<HTMLDivElement>();
-  // IMPORTANT : ne jamais calculer le countdown pendant le rendu serveur —
+  // IMPORTANT : ne jamais calculer le countdown pendant le rendu serveur -
   // Date.now() change entre le SSR et l'hydratation côté client, ce qui
   // provoque un mismatch React ("55" côté serveur vs "56" côté client).
   // On initialise à null et on ne calcule qu'après le montage (useEffect),
@@ -93,7 +93,7 @@ export default function CalendarCountdownSection({ eventDate, themeColors = {} }
                     <span className="font-serif text-sm font-semibold" style={{ color: activeBg }}>
                       {d}
                     </span>
-                    {/* petit coeur sous la date, comme sur le faire-part de référence —
+                    {/* petit coeur sous la date, comme sur le faire-part de référence -
                         plus fidèle qu'un simple pastille pleine */}
                     <span className="text-[9px] leading-none" style={{ color: activeBg }}>
                       ♥
