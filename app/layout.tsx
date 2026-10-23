@@ -1,6 +1,7 @@
 // ============ app/layout.tsx ============
 import type { Metadata } from "next";
 import { Fraunces, Work_Sans } from "next/font/google";
+import "@fontsource-variable/work-sans";
 import { ThemeProvider } from "@/app/frontend/providers/ThemeProvider";
 import { GoogleAuthProvider } from "@/app/frontend/providers/GoogleAuthProvider";
 import "./globals.css";
