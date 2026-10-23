@@ -4,13 +4,13 @@
 import "./classic-theme.css";
 import { TemplateRenderProps } from "../registry";
 import { resolveClassic } from "./classicConfig";
-import FirstSection from "../TemplateClassic/ClassicComponents/principal/FirstSection";
-import SecondSection from "../TemplateClassic/ClassicComponents/principal/SecondSection";
-import ThirdSection from "../TemplateClassic/ClassicComponents/principal/ThirdSection";
-import FullSlideSection from "../TemplateClassic/ClassicComponents/principal/FullSlideSection";
-import ProgramSection from "../TemplateClassic/ClassicComponents/principal/ProgramSection";
-import FormSection from "../TemplateClassic/ClassicComponents/principal/FormSection";
-import Footer from "../TemplateClassic/ClassicComponents/principal/Footer";
+import FirstSection from "./ClassicComponents/principal/FirstSection";
+import SecondSection from "./ClassicComponents/principal/SecondSection";
+import ThirdSection from "./ClassicComponents/principal/ThirdSection";
+import FullSlideSection from "./ClassicComponents/principal/FullSlideSection";
+import ProgramSection from "./ClassicComponents/principal/ProgramSection";
+import FormSection from "./ClassicComponents/principal/FormSection";
+import Footer from "./ClassicComponents/principal/Footer";
 
 export default function TemplateClassic({
   groomName,
