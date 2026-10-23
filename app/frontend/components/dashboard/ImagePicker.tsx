@@ -14,16 +14,12 @@ interface Props {
   defaultValue: string; // image d'origine (affichée quand value est vide)
   onChange: (url: string) => void;
   presets?: ImagePreset[]; // images proposées par le template
-  // Optionnel : branché plus tard sur le stockage (S3, Cloudinary…). Reçoit le
-  // fichier, renvoie l'URL finale. Tant qu'il n'est pas fourni, le bouton
-  // d'envoi n'apparaît pas et seul le choix parmi les modèles / un lien reste.
-  onUpload?: (file: File) => Promise<string>;
+  // Reçoit le fichier choisi sur l'appareil, renvoie l'URL finale (image stockée en base).
+  onUpload: (file: File) => Promise<string>;
   hint?: string;
 }
 
 export function ImagePicker({ label, value, defaultValue, onChange, presets = [], onUpload, hint }: Props) {
-  const [mode, setMode] = useState<"presets" | "url">(presets.length > 0 ? "presets" : "url");
-  const [urlDraft, setUrlDraft] = useState(value && !presets.some((p) => p.url === value) ? value : "");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -31,21 +27,12 @@ export function ImagePicker({ label, value, defaultValue, onChange, presets = []
   const current = value || defaultValue;
   const isDefault = !value || value === defaultValue;
 
-  function commitUrl() {
-    const v = urlDraft.trim();
-    if (!v) return;
-    if (!/^(https:\/\/|\/(?!\/))/i.test(v)) {
-      setError("Le lien doit commencer par https://");
-      return;
-    }
-    setError(null);
-    onChange(v);
-  }
-
   async function handleFile(file: File | undefined) {
-    if (!file || !onUpload) return;
-    if (!file.type.startsWith("image/")) return setError("Fichier non supporté : choisissez une image.");
-    if (file.size > 5 * 1024 * 1024) return setError("Image trop lourde (5 Mo maximum).");
+    if (!file) return;
+    if (!file.type.startsWith("image/") || file.type === "image/svg+xml") {
+      return setError("Fichier non supporté : choisissez une photo (JPG, PNG ou WebP).");
+    }
+    if (file.size > 25 * 1024 * 1024) return setError("Image trop lourde (25 Mo maximum).");
     setError(null);
     setUploading(true);
     try {
@@ -66,7 +53,6 @@ export function ImagePicker({ label, value, defaultValue, onChange, presets = []
           <button
             type="button"
             onClick={() => {
-              setUrlDraft("");
               setError(null);
               onChange("");
             }}
@@ -89,26 +75,7 @@ export function ImagePicker({ label, value, defaultValue, onChange, presets = []
         </div>
 
         <div className="flex-1 min-w-0 space-y-3">
-          <div className="flex gap-1 text-xs">
-            {presets.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setMode("presets")}
-                className={`px-3 py-1 rounded-full ${mode === "presets" ? "bg-gold/15 text-gold" : "text-foreground/60 hover:text-foreground"}`}
-              >
-                Modèles
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => setMode("url")}
-              className={`px-3 py-1 rounded-full ${mode === "url" ? "bg-gold/15 text-gold" : "text-foreground/60 hover:text-foreground"}`}
-            >
-              Mon image
-            </button>
-          </div>
-
-          {mode === "presets" && presets.length > 0 && (
+          {presets.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {presets.map((p) => {
                 const selected = current === p.url;
@@ -130,46 +97,21 @@ export function ImagePicker({ label, value, defaultValue, onChange, presets = []
             </div>
           )}
 
-          {mode === "url" && (
-            <div className="space-y-2">
-              <div className="flex gap-2">
-                <input
-                  value={urlDraft}
-                  onChange={(e) => setUrlDraft(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), commitUrl())}
-                  placeholder="https://…"
-                  className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground"
-                />
-                <button
-                  type="button"
-                  onClick={commitUrl}
-                  className="px-3 py-2 rounded-lg bg-foreground text-background text-sm hover:bg-gold hover:text-foreground transition-colors"
-                >
-                  Utiliser
-                </button>
-              </div>
-
-              {onUpload && (
-                <>
-                  <input
-                    ref={fileRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleFile(e.target.files?.[0])}
-                  />
-                  <button
-                    type="button"
-                    disabled={uploading}
-                    onClick={() => fileRef.current?.click()}
-                    className="px-3 py-2 rounded-lg border border-border text-sm text-foreground hover:border-foreground/40 disabled:opacity-50"
-                  >
-                    {uploading ? "Envoi..." : "Importer depuis mon appareil"}
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={(e) => handleFile(e.target.files?.[0])}
+          />
+          <button
+            type="button"
+            disabled={uploading}
+            onClick={() => fileRef.current?.click()}
+            className="px-3 py-2 rounded-lg border border-border text-sm text-foreground hover:border-foreground/40 disabled:opacity-50"
+          >
+            {uploading ? "Envoi…" : "Choisir une image sur mon appareil"}
+          </button>
 
           {hint && <p className="text-xs text-foreground/50">{hint}</p>}
           {error && <p className="text-xs text-red-600">{error}</p>}

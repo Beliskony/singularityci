@@ -8,6 +8,7 @@ import { TemplateFieldSchema } from "@/app/frontend/types/TemplateFielSchemas";
 import type { LivePreviewData } from "../../types/LivePreviewData";
 import { ColorPicker } from "./ColorPicker";
 import { ImagePicker, ImagePreset } from "./ImagePicker";
+import { compressImage } from "@/app/frontend/lib/compressImage";
 import { TemplateLivePreview } from "./TemplateLivePreview";
 
 interface Props {
@@ -81,7 +82,6 @@ export function PersonnalisationStudio({ site, images, fieldSchema, templateSlug
   const [saving, setSaving] = useState(false);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
-  const [photoDrafts, setPhotoDrafts] = useState<Record<string, string>>({});
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   // ---- Sections disponibles selon ce que le template expose ----
@@ -187,7 +187,7 @@ export function PersonnalisationStudio({ site, images, fieldSchema, templateSlug
             : code.startsWith("TEXT_FIELD_TOO_LONG")
             ? "Un des textes est trop long."
             : code.startsWith("INVALID_IMAGE_URL")
-            ? "Un lien d'image est invalide (il doit commencer par https://)."
+            ? "Une image est invalide, choisissez-la de nouveau."
             : "Une erreur est survenue, réessayez.",
         });
         return;
@@ -202,30 +202,42 @@ export function PersonnalisationStudio({ site, images, fieldSchema, templateSlug
     }
   }
 
-  // ---- Photos (liens https:// tant que l'import de fichiers n'est pas branché) ----
-  async function addPhoto(role: SiteImageRole) {
-    const url = (photoDrafts[role] ?? "").trim();
-    if (!/^https:\/\//i.test(url)) return setPhotoError("Le lien doit commencer par https://");
+  // ---- Envoi d'images depuis l'appareil (réduites dans le navigateur, stockées en base) ----
+  async function uploadFile(file: File): Promise<string> {
+    const small = await compressImage(file);
+    const fd = new FormData();
+    fd.append("file", small);
+    const res = await fetch(`/api/client/sites/${site.id}/uploads`, { method: "POST", body: fd, credentials: "include" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error ?? "UPLOAD_FAILED");
+    return data.url as string;
+  }
+
+  async function addPhotos(role: SiteImageRole, files: FileList | null, remaining: number) {
+    if (!files || files.length === 0) return;
     setPhotoBusy(true);
     setPhotoError(null);
     try {
-      const res = await fetch(`/api/client/sites/${site.id}/images`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ url, role }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        const code: string = data.error ?? "";
-        return setPhotoError(
-          code.startsWith("MAX_IMAGES_REACHED") ? "Nombre maximum de photos atteint." : "Impossible d'ajouter cette photo."
-        );
+      for (const file of Array.from(files).slice(0, remaining)) {
+        const url = await uploadFile(file);
+        const res = await fetch(`/api/client/sites/${site.id}/images`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ url, role }),
+        });
+        if (!res.ok) throw new Error("ATTACH_FAILED");
       }
-      setPhotoDrafts((p) => ({ ...p, [role]: "" }));
       router.refresh(); // recharge les photos → l'aperçu se met à jour
-    } catch {
-      setPhotoError("Impossible de contacter le serveur.");
+    } catch (e) {
+      const code = e instanceof Error ? e.message : "";
+      setPhotoError(
+        code === "STORAGE_QUOTA_EXCEEDED"
+          ? "Espace de stockage de ce site plein."
+          : code === "UNSUPPORTED_IMAGE" || code === "FILE_TOO_LARGE"
+          ? "Fichier non supporté : choisissez une photo (JPG, PNG ou WebP)."
+          : "Impossible d'envoyer cette photo, réessayez."
+      );
     } finally {
       setPhotoBusy(false);
     }
@@ -362,6 +374,7 @@ export function PersonnalisationStudio({ site, images, fieldSchema, templateSlug
                   value={customTexts[f.key] ?? ""}
                   defaultValue={f.defaultValue}
                   presets={f.presets}
+                  onUpload={uploadFile}
                   onChange={(url) => setCustomTexts((prev) => ({ ...prev, [f.key]: url }))}
                 />
               </div>
@@ -421,30 +434,27 @@ export function PersonnalisationStudio({ site, images, fieldSchema, templateSlug
                       ))}
                     </div>
                     {roleImages.length < max && (
-                      <div className="mt-3 flex gap-2">
+                      <label className="mt-3 inline-block cursor-pointer px-4 py-2 rounded-lg border border-border text-sm text-foreground hover:border-foreground/40 aria-disabled:opacity-50">
+                        {photoBusy ? "Envoi…" : max - roleImages.length > 1 ? "Ajouter des photos" : "Ajouter une photo"}
                         <input
-                          value={photoDrafts[role] ?? ""}
-                          onChange={(e) => setPhotoDrafts((p) => ({ ...p, [role]: e.target.value }))}
-                          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addPhoto(role))}
-                          placeholder="https://… lien de la photo"
-                          className="flex-1 min-w-0 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-                        />
-                        <button
-                          type="button"
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          multiple={max - roleImages.length > 1}
                           disabled={photoBusy}
-                          onClick={() => addPhoto(role)}
-                          className="px-3 py-2 rounded-lg bg-foreground text-background text-sm hover:bg-gold hover:text-foreground transition-colors disabled:opacity-50"
-                        >
-                          Ajouter
-                        </button>
-                      </div>
+                          className="hidden"
+                          onChange={(e) => {
+                            void addPhotos(role, e.target.files, max - roleImages.length);
+                            e.target.value = "";
+                          }}
+                        />
+                      </label>
                     )}
                   </div>
                 );
               })}
               {photoError && <p className="text-sm text-red-600">{photoError}</p>}
               <p className="text-xs text-foreground/50">
-                Collez le lien https:// d&apos;une photo déjà en ligne. L&apos;import depuis votre appareil arrive bientôt.
+                Choisissez des photos sur votre appareil (JPG, PNG ou WebP) : elles sont réduites automatiquement avant l&apos;envoi.
               </p>
             </div>
           )}

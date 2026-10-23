@@ -51,7 +51,7 @@ export class TemplateService {
   async getPrice(templateId: string): Promise<number | null> {
     const template = await this.templateRepo.findById(templateId);
     if (!template || !template.isActive) return null;
-    return template.price;
+    return template.price_xof;
   }
 
   async isActiveTemplate(templateId: string): Promise<boolean> {
@@ -73,7 +73,7 @@ export class TemplateService {
       name: input.name,
       slug: input.slug,
       description: input.description,
-      price: input.price,
+      price_xof: input.price,
       previewImages: input.previewImages,
       isActive: true,
     });

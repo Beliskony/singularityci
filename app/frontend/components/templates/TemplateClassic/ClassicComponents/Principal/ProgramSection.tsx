@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useInView } from "../../hooks/useInView";
 import type { IProgramItem } from "@/app/server/sites/ISite";
-import type { ClassicImages, ClassicTexts } from "../../ClassicConfig";
+import type { ClassicImages, ClassicTexts } from "../../classicConfig";
 
 interface ProgramSectionProps {
   eventDate: Date;

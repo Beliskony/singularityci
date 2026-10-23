@@ -19,7 +19,7 @@ const workSans = Work_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Singularity.ci — Sites de mariage personnalisés",
+  title: "Singularity.ci - Sites de mariage personnalisés",
   description: "Créez le site de votre mariage en quelques minutes, en Côte d'Ivoire.",
 };
 

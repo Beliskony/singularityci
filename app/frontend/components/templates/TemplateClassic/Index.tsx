@@ -3,7 +3,7 @@
 
 import "./classic-theme.css";
 import { TemplateRenderProps } from "../registry";
-import { resolveClassic } from "./ClassicConfig";
+import { resolveClassic } from "./classicConfig";
 import FirstSection from "../TemplateClassic/ClassicComponents/principal/FirstSection";
 import SecondSection from "../TemplateClassic/ClassicComponents/principal/SecondSection";
 import ThirdSection from "../TemplateClassic/ClassicComponents/principal/ThirdSection";

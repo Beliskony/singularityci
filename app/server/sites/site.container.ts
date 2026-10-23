@@ -2,7 +2,7 @@
 import { SiteService } from "./Site.service";
 import { SiteRepositoryImpl, SiteImageRepositoryImpl } from "./Site.repository";
 import { TemplateRepositoryImpl } from "../templates/Template.repository";
-import { LinkImageStorage } from "./infra/LinkImagesStorage";
+import { DbImageStorage } from "./infra/DbImageStorage";
 
 let instance: SiteService | null = null;
 
@@ -12,7 +12,7 @@ export function getSiteService(): SiteService {
       new SiteRepositoryImpl(),
       new SiteImageRepositoryImpl(),
       new TemplateRepositoryImpl(),
-      new LinkImageStorage()
+      new DbImageStorage()
     );
   }
   return instance;

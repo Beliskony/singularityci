@@ -353,8 +353,9 @@ async getSiteForEditing(
       const field = fieldsByKey.get(key);
       if (!field) throw new BusinessRuleError(`UNKNOWN_TEXT_FIELD: ${key}`);
       if (value.length > field.maxLength) throw new BusinessRuleError(`TEXT_FIELD_TOO_LONG: ${key}`);
-      // Un champ image n'accepte qu'un lien https:// ou un chemin du site (/...) : jamais javascript:, data:…
-      if (field.kind === "image" && !/^(https:\/\/|\/(?!\/))/i.test(value)) {
+      // Un champ image n'accepte qu'un chemin du site (/classiqueTemplate/…, /api/images/<uuid>) :
+      // jamais de lien externe, javascript:, data:…
+      if (field.kind === "image" && !/^\/(?!\/)/.test(value)) {
         throw new BusinessRuleError(`INVALID_IMAGE_URL: ${key}`);
       }
     }
